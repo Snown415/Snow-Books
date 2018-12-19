@@ -1,5 +1,5 @@
 # Snow-Books
-A JavaFX client built to utilize a MVC (Model View Controller) architecture
+A JavaFX client built to utilize a MVC (Model View Controller) architecture.
 
 Snow Books is a business application that utilizes JavaFX, MySQL, Serialization, and a Socket connection to help small business owners keep track of their finances. 
 
@@ -8,7 +8,7 @@ Snow Books is a business application that utilizes JavaFX, MySQL, Serialization,
 - Use of Serialization to store business data on the server.
 - A custom architecture using JavaFX that only requires 1 line of code to create new views and switch the current scene.
 - Multi-threaded account creation during runtime to simulate mass amounts of users and demonstrate scalability.
-- Utilization of MySQL to handle logins / recoveries
+- Utilization of MySQL to handle logins / recoveries.
 
 ### Contents:
 - The ability to add, create, and customize new businesses with a simple click.
