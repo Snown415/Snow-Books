@@ -35,7 +35,9 @@ public class PacketDecoder {
 			packet = new RegistrationPacket(type, data);
 			packet.process();
 			break;
+			
 		default:
+			System.err.println("Invalid packet! ID: " + action);
 			break;
 			
 		}

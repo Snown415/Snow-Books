@@ -1,30 +1,23 @@
 package snow.session.packet;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
 public abstract class Packet {
 
 	private @Getter @Setter PacketType type;
+	private @Getter @Setter int packetId;
 	private @Getter @Setter Object[] data;
-	private @Getter @Setter List<Object> packetData = new LinkedList<>();
+	private @Getter @Setter Object[] fullPacket;
 	
 	public Packet(PacketType type, Object... data) {
 		setType(type);
-		
-		packetData.add(getPacketId());
-		List<Object> list = Arrays.asList(data);
-		packetData.addAll(list);
-		setData(packetData.toArray());
+		setPacketId(type.getPacketId());
+		setData(data);
+		fullPacket = new Object[data.length + 1];
+		System.arraycopy(data, 0, fullPacket, 1, data.length);
+		fullPacket[0] = packetId;
 	}
 	
 	public abstract void process();
-	
-	public int getPacketId() {
-		return type.getPacketId();
-	}
 }

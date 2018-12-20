@@ -40,7 +40,7 @@ public class PacketEncoder {
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
 			
-			out.writeObject(packet.getData());
+			out.writeObject(packet.getFullPacket());
 
 			if (response)
 				session.getDecoder().handleResponse((Object[]) in.readObject());
