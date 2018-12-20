@@ -3,9 +3,8 @@ package snow.session.packet;
 import lombok.Getter;
 import lombok.Setter;
 import snow.session.Session;
-import snow.user.User;
-import snow.views.View;
-import snow.views.login.LoginViewController;
+import snow.session.packet.impl.LoginPacket;
+import snow.session.packet.impl.RegistrationPacket;
 
 public class PacketDecoder {
 	
@@ -24,47 +23,17 @@ public class PacketDecoder {
 		}
 		
 		PacketType type = PacketType.getPacketTypes().get(action);
+		Packet packet;
 		
 		switch (type) {
 		case LOGIN:
-			boolean validLogin = (boolean) data[1];
-			
-			if (!validLogin) {
-				String error = (String) data[2];
-				
-				if (session.getController() instanceof LoginViewController) {
-					LoginViewController controller = (LoginViewController) session.getController();
-					controller.setLoginMessage(error);
-				}
-				return;
-			}
-			
-			String username = (String) data[2];
-			User user = new User(username);
-			
-			getSession().setUser(user);
-			getSession().setController(View.MAIN, true);
+			packet = new LoginPacket(type, data);
+			packet.process();
 			break; 
 			
 		case REGISTER:
-			boolean validRegistration = (boolean) data[1];
-			
-			if (!validRegistration) {
-				String error = (String) data[2];
-				
-				if (session.getController() instanceof LoginViewController) {
-					LoginViewController controller = (LoginViewController) session.getController();
-					controller.setLoginMessage(error);
-				}
-				
-				return;
-			}
-			
-			username = (String) data[2];
-			user = new User(username);
-			
-			getSession().setUser(user);
-			getSession().setController(View.MAIN, true);
+			packet = new RegistrationPacket(type, data);
+			packet.process();
 			break;
 		default:
 			break;

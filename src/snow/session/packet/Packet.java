@@ -7,12 +7,10 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Packet {
+public abstract class Packet {
 
 	private @Getter @Setter PacketType type;
 	private @Getter @Setter Object[] data;
-	
-	
 	private @Getter @Setter List<Object> packetData = new LinkedList<>();
 	
 	public Packet(PacketType type, Object... data) {
@@ -23,6 +21,8 @@ public class Packet {
 		packetData.addAll(list);
 		setData(packetData.toArray());
 	}
+	
+	public abstract void process();
 	
 	public int getPacketId() {
 		return type.getPacketId();

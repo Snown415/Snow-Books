@@ -18,6 +18,8 @@ import lombok.Getter;
 import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
+import snow.session.packet.impl.LoginPacket;
+import snow.session.packet.impl.RegistrationPacket;
 import snow.views.Controller;
 
 public class LoginViewController extends Controller implements Initializable {
@@ -43,12 +45,8 @@ public class LoginViewController extends Controller implements Initializable {
 			return;
 		}
 		
-		Packet p = new Packet(PacketType.REGISTER, username.getText(), password.getText());
+		Packet p = new RegistrationPacket(PacketType.REGISTER, username.getText(), password.getText());
 		currentSession.getEncoder().sendPacket(true, p);
-		
-		//MySQL.registerUser(username.getText(), password.getText());
-		//Client.getSession().setUser(new User(username.getText()));
-		//Client.getSession().setController(View.BUSINESS, true);
 	}
 	
 	public void onLogin() throws IOException {
@@ -57,10 +55,8 @@ public class LoginViewController extends Controller implements Initializable {
 			return;
 		}
 		
-		Packet p = new Packet(PacketType.LOGIN, username.getText(), password.getText());
+		Packet p = new LoginPacket(PacketType.LOGIN, username.getText(), password.getText());
 		currentSession.getEncoder().sendPacket(true, p);
-		
-		// TODO Request login
 	}
 	
 	public void onKeyPressed(Event e) throws IOException {
