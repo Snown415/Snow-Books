@@ -27,13 +27,30 @@ public class PacketDecoder {
 		
 		switch (type) {
 		case LOGIN:
-			break;
+			boolean validLogin = (boolean) data[1];
+			
+			if (!validLogin) {
+				String error = (String) data[2];
+				
+				if (session.getController() instanceof LoginViewController) {
+					LoginViewController controller = (LoginViewController) session.getController();
+					controller.setLoginMessage(error);
+				}
+				return;
+			}
+			
+			String username = (String) data[2];
+			User user = new User(username);
+			
+			getSession().setUser(user);
+			getSession().setController(View.MAIN, true);
+			break; 
+			
 		case REGISTER:
 			boolean validRegistration = (boolean) data[1];
 			
 			if (!validRegistration) {
 				String error = (String) data[2];
-				System.err.println("Invalid Registration; Error: " + error);
 				
 				if (session.getController() instanceof LoginViewController) {
 					LoginViewController controller = (LoginViewController) session.getController();
@@ -43,8 +60,8 @@ public class PacketDecoder {
 				return;
 			}
 			
-			String username = (String) data[2];
-			User user = new User(username);
+			username = (String) data[2];
+			user = new User(username);
 			
 			getSession().setUser(user);
 			getSession().setController(View.MAIN, true);

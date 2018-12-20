@@ -1,5 +1,6 @@
 package snow.session.packet;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,23 +9,19 @@ import lombok.Setter;
 
 public class Packet {
 
-	public @Getter @Setter PacketType type;
-	public @Getter @Setter Object[] data;
-	public @Getter @Setter Object[] fullPacket;
+	private @Getter @Setter PacketType type;
+	private @Getter @Setter Object[] data;
+	
 	
 	private @Getter @Setter List<Object> packetData = new LinkedList<>();
 	
-	public Packet(PacketType type, Object[] data) {
+	public Packet(PacketType type, Object... data) {
 		setType(type);
-		setData(data);
 		
-		packetData.add(type.getPacketId());
-		
-		for (Object o : data)  {
-			packetData.add(o);
-		}
-		
-		setFullPacket(packetData.toArray());
+		packetData.add(getPacketId());
+		List<Object> list = Arrays.asList(data);
+		packetData.addAll(list);
+		setData(packetData.toArray());
 	}
 	
 	public int getPacketId() {
