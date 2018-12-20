@@ -43,9 +43,8 @@ public class LoginViewController extends Controller implements Initializable {
 			return;
 		}
 		
-		Packet p = new Packet(PacketType.REGISTER, new Object[] { username.getText(), password.getText() });
+		Packet p = new Packet(PacketType.REGISTER, username.getText(), password.getText());
 		currentSession.getEncoder().sendPacket(true, p);
-		
 		
 		//MySQL.registerUser(username.getText(), password.getText());
 		//Client.getSession().setUser(new User(username.getText()));
@@ -57,6 +56,9 @@ public class LoginViewController extends Controller implements Initializable {
 			message.setText("Your username & password need to be atleast 3 characters long.");
 			return;
 		}
+		
+		Packet p = new Packet(PacketType.LOGIN, username.getText(), password.getText());
+		currentSession.getEncoder().sendPacket(true, p);
 		
 		// TODO Request login
 	}
