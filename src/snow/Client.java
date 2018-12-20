@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
 import snow.session.Session;
-import sql.MySQL;
+import snow.session.packet.PacketType;
 
 /**
  * Contains the Main method for launching the application;
@@ -20,6 +20,7 @@ public class Client extends Application {
 	
 	public static void main(String[] args) {
 		setSession(new Session(null));
+		PacketType.init();
 		launch(args);
 	}
 
@@ -27,7 +28,6 @@ public class Client extends Application {
 	public void start(Stage stage) throws Exception {
 		session.setStage(stage);
 		session.setView();
-		MySQL.init();
 	}
 
 }

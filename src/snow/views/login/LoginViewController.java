@@ -14,15 +14,15 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import lombok.Getter;
 import snow.Client;
-import snow.user.User;
+import snow.session.packet.Packet;
+import snow.session.packet.PacketType;
 import snow.views.Controller;
-import snow.views.View;
-import sql.MySQL;
 
 public class LoginViewController extends Controller implements Initializable {
 	
-	private @FXML Label message;
+	private @Getter @FXML Label message;
 	private @FXML TextField username;
 	private @FXML PasswordField password;
 	private @FXML Button login;
@@ -33,20 +33,23 @@ public class LoginViewController extends Controller implements Initializable {
 		currentSession = Client.getSession();
 	}
 	
+	public void setLoginMessage(String value) {
+		message.setText(value);
+	}
+	
 	public void onRegister() {
 		if (username.getText().length() < 3 || password.getText().length() < 3) {
 			message.setText("Your username & password need to be atleast 3 characters long.");
 			return;
 		}
 		
-		if (MySQL.foundUser(username.getText())) {
-			message.setText("There is already a user named '" + username.getText() + "'.");
-			return;
-		}
+		Packet p = new Packet(PacketType.REGISTER, new Object[] { username.getText(), password.getText() });
+		currentSession.getEncoder().sendPacket(true, p);
 		
-		MySQL.registerUser(username.getText(), password.getText());
-		Client.getSession().setUser(new User(username.getText()));
-		Client.getSession().setController(View.BUSINESS, true);
+		
+		//MySQL.registerUser(username.getText(), password.getText());
+		//Client.getSession().setUser(new User(username.getText()));
+		//Client.getSession().setController(View.BUSINESS, true);
 	}
 	
 	public void onLogin() throws IOException {
@@ -55,13 +58,7 @@ public class LoginViewController extends Controller implements Initializable {
 			return;
 		}
 		
-		if (!MySQL.validLogin(username.getText(), password.getText())) {
-			message.setText(MySQL.loginReturn);
-			return;
-		}
-		
-		Client.getSession().setUser(new User(username.getText()));
-		Client.getSession().setController(View.MAIN, true);
+		// TODO Request login
 	}
 	
 	public void onKeyPressed(Event e) throws IOException {
