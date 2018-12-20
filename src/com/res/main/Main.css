@@ -1,0 +1,81 @@
+.root{
+	-fx-background-color: #032933;
+}
+
+.label {
+	-fx-text-fill: #0683A5;
+}
+
+.date-picker {
+	-fx-background-color: #034F64;
+}
+
+.text-field {
+	-fx-prompt-text-fill: #0683A5;
+	-fx-background-color: #034F64;
+	-fx-border-color: #03617A;
+	-fx-text-fill: #63DAFA;
+}
+
+.combo-box {
+	-fx-background-color: #034F64;
+	-fx-border-color: #03617A;
+}
+
+.combo-box-base .text {
+	-fx-fill: #63DAFA;
+}
+
+.combo-box .text-field:focused {
+    -fx-prompt-text-fill: transparent ;
+}
+
+.combo-box-popup .list-view {
+	-fx-background-color: #03617A;
+}
+
+.combo-box-popup .list-view .list-cell {
+	-fx-background-color: #034F64;
+	-fx-border-color: #03617A;
+	-fx-text-fill: #63DAFA;
+}
+
+.button {
+	-fx-background-color: #034F64;
+	-fx-border-color: #03617A;
+	-fx-text-fill: #63DAFA;
+}
+
+.text-field:hover {
+	-fx-background-color: #0F7E9D;
+}
+
+.combo-box:hover {
+	-fx-background-color: #0F7E9D;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+	-fx-background-color: #0F7E9D;
+}
+
+.button:hover {
+	-fx-background-color: #0F7E9D;
+}
+
+#chart-box {
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+	-fx-border-color: #33AFD1;
+}
+
+#add-transaction {
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+	-fx-border-color: #33AFD1;
+}
+
+#transaction-table {
+	-fx-border-style: solid;
+	-fx-border-width: 1px;
+	-fx-border-color: #33AFD1;
+}

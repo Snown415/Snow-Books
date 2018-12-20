@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import snow.session.packet.PacketDecoder;
+import snow.session.packet.PacketEncoder;
 import snow.user.User;
 import snow.views.Controller;
 import snow.views.View;
@@ -25,6 +27,9 @@ public class Session {
 	private @Getter @Setter Stage stage;
 	private @Getter @Setter ViewManager viewManager;
 	
+	private @Getter @Setter PacketEncoder encoder;
+	private @Getter @Setter PacketDecoder decoder;
+	
 	private @Getter @Setter View currentView;
 	private @Getter @Setter Scene scene;
 	private @Getter Controller controller;
@@ -34,6 +39,9 @@ public class Session {
 		
 		if (user == null)
 			setController(View.LOGIN, false);
+		
+		encoder = new PacketEncoder(this);
+		decoder = new PacketDecoder(this);
 	}
 	
 	public void setController(View view, boolean setView) {
@@ -62,6 +70,7 @@ public class Session {
 			stage.setTitle(currentView.getTitle());
 			stage.setResizable(currentView.isResizeable());
 			stage.show();
+			controller = viewManager.getLoader().getController();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
