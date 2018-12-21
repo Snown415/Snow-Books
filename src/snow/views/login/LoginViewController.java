@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import lombok.Getter;
-import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
 import snow.session.packet.impl.LoginPacket;
@@ -32,7 +31,7 @@ public class LoginViewController extends Controller implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		currentSession = Client.getSession();
+		
 	}
 	
 	public void setLoginMessage(String value) {
@@ -46,7 +45,7 @@ public class LoginViewController extends Controller implements Initializable {
 		}
 		
 		Packet p = new RegistrationPacket(PacketType.REGISTER, username.getText(), password.getText());
-		currentSession.getEncoder().sendPacket(true, p);
+		session.getEncoder().sendPacket(true, p);
 	}
 	
 	public void onLogin() throws IOException {
@@ -56,7 +55,7 @@ public class LoginViewController extends Controller implements Initializable {
 		}
 		
 		Packet p = new LoginPacket(PacketType.LOGIN, username.getText(), password.getText());
-		currentSession.getEncoder().sendPacket(true, p);
+		session.getEncoder().sendPacket(true, p);
 	}
 	
 	public void onKeyPressed(Event e) throws IOException {
