@@ -8,12 +8,11 @@ import java.net.UnknownHostException;
 
 import lombok.Getter;
 import lombok.Setter;
+import snow.Config;
 import snow.session.Session;
 
 public class PacketEncoder {
-
-	private boolean live = true;
-	private boolean local = true;
+	
 	private Socket socket;
 	private @Getter @Setter Session session;
 	
@@ -21,28 +20,27 @@ public class PacketEncoder {
 		setSession(session);
 	}
 
-	public void connect() {
+	public boolean connect() {
 		System.out.println("Connecting...");
 		try {
-			socket = new Socket(live ? "184.91.35.220" : local ? "127.0.0.1" : "192.168.1.25", 43595);
-			System.out.println("Created client socket.");
-			return;
+			socket = new Socket(Config.HOST, Config.PORT);
+			return true;
 		} catch (UnknownHostException e) {
-			System.out.println("Unknown host");
-			e.printStackTrace();
+			System.err.println("Unknown host");
 		} catch (IOException e) {
-			System.out.println("IO Exception");
-			e.printStackTrace();
+			System.err.println("IO Exception");
 		} catch (SecurityException e) {
-			System.out.println("Security Exception");
-			e.printStackTrace();
+			System.err.println("Security Exception");
 		}
-		
-		System.err.println("Failed to open socket.");
+		return false;
 	}
 
 	public void sendPacket(boolean response, Packet packet) {
-		connect();
+		if (!connect()) {
+			System.err.println("Failed to send packet; The connection to the server was never made.");
+			return;
+		}
+		
 		ObjectOutputStream out;
 		ObjectInputStream in;
 
