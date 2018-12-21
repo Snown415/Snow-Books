@@ -12,6 +12,8 @@ import snow.session.Session;
 
 public class PacketEncoder {
 
+	private boolean live = true;
+	private boolean local = true;
 	private Socket socket;
 	private @Getter @Setter Session session;
 	
@@ -20,15 +22,23 @@ public class PacketEncoder {
 	}
 
 	public void connect() {
+		System.out.println("Connecting...");
 		try {
-			socket = new Socket("127.0.0.1", 43595);
+			socket = new Socket(live ? "184.91.35.220" : local ? "127.0.0.1" : "192.168.1.25", 43595);
+			System.out.println("Created client socket.");
+			return;
 		} catch (UnknownHostException e) {
 			System.out.println("Unknown host");
-			return;
+			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("IO Exception");
-			return;
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			System.out.println("Security Exception");
+			e.printStackTrace();
 		}
+		
+		System.err.println("Failed to open socket.");
 	}
 
 	public void sendPacket(boolean response, Packet packet) {
