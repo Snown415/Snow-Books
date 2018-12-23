@@ -14,7 +14,6 @@ Snow Books is a business application that utilizes JavaFX, MySQL, Serialization,
 - Use of Serialization to store business data on the server. ~
 - A custom architecture using JavaFX that only requires 1 line of code to create new views and switch the current scene. ~
 - Multi-threaded account creation during runtime to simulate mass amounts of users and demonstrate scalability. ~
-- Utilization of MySQL to handle logins / recoveries. ~
 
 ### Content:
 - Interactive front-end using JavaFX. *
