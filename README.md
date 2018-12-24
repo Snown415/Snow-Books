@@ -6,6 +6,8 @@ Snow Books is a business application that utilizes JavaFX, MySQL, Serialization,
 ' * ' - Work in progress
 ' ~ ' - Finished
 
+! Snowbooks is currently being merged with a JavaFX foundation to create v2 of Snowbooks
+
 ### Main Features (Server):
 - Secure accounts and simple Username/Password registration. ~
 - Password encrpytion. ~
