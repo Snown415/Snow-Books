@@ -7,8 +7,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import snow.session.packet.Packet;
 import snow.session.packet.PacketDecoder;
 import snow.session.packet.PacketEncoder;
+import snow.session.packet.PacketType;
+import snow.session.packet.impl.LogoutPacket;
 import snow.user.User;
 import snow.views.Controller;
 import snow.views.View;
@@ -69,12 +72,18 @@ public class Session {
 			stage.setScene(new Scene(viewManager.getLoader().load()));
 			stage.setTitle(currentView.getTitle());
 			stage.setResizable(currentView.isResizeable());
+			stage.setOnCloseRequest(e -> finish());
 			stage.show();
 			controller = viewManager.getLoader().getController();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public void finish() {
+		Packet packet = new LogoutPacket(PacketType.LOGOUT);
+		encoder.sendPacket(false, packet);
 	}
 
 }

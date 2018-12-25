@@ -20,6 +20,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
+import snow.session.packet.Packet;
+import snow.session.packet.PacketType;
+import snow.session.packet.impl.LogoutPacket;
 import snow.views.Controller;
 
 public class MainViewController extends Controller implements Initializable {
@@ -84,6 +87,11 @@ public class MainViewController extends Controller implements Initializable {
 		ContextMenu menu = new ContextMenu();
 		menu.getItems().addAll(items);
 		return menu;
+	}
+	
+	public void onLogout() {
+		Packet packet = new LogoutPacket(PacketType.LOGOUT);
+		currentSession.getEncoder().sendPacket(false, packet);
 	}
 	
 	public void onAddBusiness() {

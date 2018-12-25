@@ -4,6 +4,7 @@ import java.net.URL;
 
 import lombok.Getter;
 import lombok.Setter;
+import snow.Client;
 import snow.session.Session;
 
 /**
@@ -18,6 +19,6 @@ public abstract class Controller {
 	protected URL Resource;
 	
 	@Getter @Setter
-	protected Session currentSession;
+	protected Session currentSession = Client.getSession();
 
 }
