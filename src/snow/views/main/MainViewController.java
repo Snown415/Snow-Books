@@ -91,7 +91,7 @@ public class MainViewController extends Controller implements Initializable {
 	
 	public void onLogout() {
 		Packet packet = new LogoutPacket(PacketType.LOGOUT);
-		currentSession.getEncoder().sendPacket(false, packet);
+		session.getEncoder().sendPacket(false, packet);
 	}
 	
 	public void onAddBusiness() {

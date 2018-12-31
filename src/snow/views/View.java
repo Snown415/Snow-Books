@@ -10,7 +10,8 @@ public enum View {
 	
 	MAIN("Main", "Home Page", MainViewController.class, false),
 	BUSINESS("Business", "Your Business", BusinessViewController.class, false),
-	LOGIN("Login", "Login", LoginViewController.class, false);
+	LOGIN("Login", "Login", LoginViewController.class, false),
+	LOADING("Loading", "Loading.. Please Wait", LoginViewController.class, false);
 	
 	private @Getter @Setter String name, fxml, title;
 	private @Getter @Setter Class<Controller> controller;

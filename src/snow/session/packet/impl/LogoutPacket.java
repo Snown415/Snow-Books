@@ -1,7 +1,9 @@
 package snow.session.packet.impl;
 
+import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
+import snow.views.View;
 
 public class LogoutPacket extends Packet {
 
@@ -11,7 +13,7 @@ public class LogoutPacket extends Packet {
 
 	@Override
 	public void process() {
-		// No need..
+		Client.getSession().setController(View.LOGIN, true);
 	}
 
 }

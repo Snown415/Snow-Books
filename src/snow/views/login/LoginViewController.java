@@ -1,5 +1,6 @@
 package snow.views.login;
 
+import java.awt.SplashScreen;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,6 +36,10 @@ public class LoginViewController extends Controller implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		Preferences prefs = Serialize.loadPreferences();
+		
+		session.getStage().setOnShowing(e -> {
+			closeSplash();
+		});
 
 		if (prefs == null) {
 			prefs = new Preferences();
@@ -43,6 +48,7 @@ public class LoginViewController extends Controller implements Initializable {
 		setPrefs(prefs);
 		
 		rememberUsername.setSelected(prefs.isRememberUsername());
+		autoLogin.setSelected(prefs.isAutoLogin());
 
 		if (prefs.isRememberUsername())
 			username.setText(prefs.getUsername());
@@ -53,12 +59,15 @@ public class LoginViewController extends Controller implements Initializable {
 	private void processAutoLogin() {
 		if (prefs.isAutoLogin()) {
 			password.setText(prefs.getPassword());
-
-			try {
-				onLogin();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			
+			session.getStage().setOnShown(e -> {
+				
+				try {
+					onLogin();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+			});
 		}
 	}
 
@@ -110,6 +119,14 @@ public class LoginViewController extends Controller implements Initializable {
 		prefs.setUsername(remember || auto ? u : null);
 		prefs.setPassword(auto ? p : null);
 		Serialize.savePreferences(prefs);
+	}
+	
+	private void closeSplash() {
+		SplashScreen ss = SplashScreen.getSplashScreen();
+		
+		if (ss != null) {
+			ss.close();
+		}
 	}
 
 }

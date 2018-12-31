@@ -7,7 +7,7 @@ public abstract class Packet {
 
 	private @Getter @Setter PacketType type;
 	private @Getter @Setter int packetId;
-	private @Getter @Setter Object[] data;
+	protected @Getter @Setter Object[] data;
 	private @Getter @Setter Object[] fullPacket;
 	
 	public Packet(PacketType type, Object... data) {
