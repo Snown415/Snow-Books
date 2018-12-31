@@ -9,12 +9,22 @@ public class Preferences implements Serializable {
 
 	private static final long serialVersionUID = -6612917409540407117L;
 	
-	public @Getter @Setter boolean rememberUsername;
-	public @Getter @Setter String username;
+	private @Getter @Setter boolean rememberUsername;
+	private @Getter @Setter boolean autoLogin;
+	
+	private @Getter @Setter String username;
+	private @Getter @Setter String password;
 	
 	public Preferences() {
 		setRememberUsername(false);
-		setUsername(null);
+		setAutoLogin(false);
+	}
+	
+	public Preferences(boolean remember, boolean auto, String u, String p) {
+		setRememberUsername(remember);
+		setAutoLogin(auto);
+		setUsername(u);
+		setPassword(p);
 	}
 
 }

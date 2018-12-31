@@ -29,6 +29,7 @@ public class Session {
 	
 	private @Getter @Setter PacketEncoder encoder;
 	private @Getter @Setter PacketDecoder decoder;
+	private @Getter @Setter Preferences prefs;
 	
 	private @Getter @Setter View currentView;
 	private @Getter @Setter Scene scene;
