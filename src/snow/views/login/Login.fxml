@@ -60,7 +60,7 @@
                   <Font size="25.0" />
                </font>
             </Label>
-            <Label fx:id="message" alignment="CENTER" text="Please Login or Register" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+            <Label fx:id="message" alignment="CENTER" prefHeight="32.0" prefWidth="295.0" text="Please Login or Register" textAlignment="CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
          </children>
       </AnchorPane>
    </top>

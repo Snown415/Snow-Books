@@ -37,7 +37,7 @@ public class LoginViewController extends Controller implements Initializable {
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		Preferences prefs = Serialize.loadPreferences();
 		
-		session.getStage().setOnShowing(e -> {
+		session.getStage().setOnShown(e -> {
 			closeSplash();
 		});
 
@@ -61,6 +61,7 @@ public class LoginViewController extends Controller implements Initializable {
 			password.setText(prefs.getPassword());
 			
 			session.getStage().setOnShown(e -> {
+				closeSplash();
 				
 				try {
 					onLogin();
@@ -93,6 +94,11 @@ public class LoginViewController extends Controller implements Initializable {
 		}
 
 		savePreferences();
+		
+		if (!session.getEncoder().connect()) {
+			message.setText("Couldn't connect to the server\nplease try again later.");
+			return;
+		}
 
 		Packet packet = new LoginPacket(PacketType.LOGIN, username.getText(), password.getText());
 		session.getEncoder().sendPacket(true, packet);
