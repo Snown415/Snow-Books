@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="211.0" prefWidth="403.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.TransactionViewController">
+   <top>
+      <AnchorPane prefHeight="38.0" prefWidth="403.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="153.0" layoutY="9.0" prefHeight="20.0" prefWidth="101.0" text="Add Transaction" />
+         </children>
+      </AnchorPane>
+   </top>
+   <left>
+      <AnchorPane prefHeight="173.0" prefWidth="123.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox alignment="CENTER" layoutX="5.0" layoutY="-13.0" prefHeight="173.0" prefWidth="122.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <ComboBox fx:id="type" prefWidth="150.0" promptText="Type" />
+                  <ComboBox fx:id="currencyType" layoutX="25.0" layoutY="25.0" prefHeight="27.0" prefWidth="120.0" promptText="Currency" />
+                  <ComboBox fx:id="budgetSelection" disable="true" prefWidth="150.0" promptText="Budget" />
+                  <DatePicker fx:id="date" promptText="Date" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+            <Separator layoutY="-6.0" prefHeight="14.0" prefWidth="130.0" />
+         </children>
+      </AnchorPane>
+   </left>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox layoutX="20.0" layoutY="-13.0" prefHeight="187.0" prefWidth="280.0" style="-fx-background-color: lightgrey;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="40.0" prefWidth="280.0" spacing="15.0">
+                     <children>
+                        <TextField fx:id="transactionId" promptText="Transaction Id">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="recipient" layoutX="67.0" layoutY="27.0" promptText="Recipient">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="40.0" prefWidth="280.0" spacing="15.0">
+                     <children>
+                        <TextField fx:id="email" promptText="Email">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="phone" layoutX="67.0" layoutY="27.0" promptText="Phone #">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="10.0" layoutY="50.0" prefHeight="40.0" prefWidth="280.0" spacing="15.0">
+                     <children>
+                        <TextField fx:id="amount" promptText="Amount">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <TextField fx:id="saving" layoutX="67.0" layoutY="27.0" promptText="Saving % (0.00)">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER" layoutX="10.0" layoutY="90.0" prefHeight="40.0" prefWidth="280.0" spacing="15.0">
+                     <children>
+                        <Button fx:id="submit" mnemonicParsing="false" prefHeight="27.0" prefWidth="169.0" text="Submit">
+                           <HBox.margin>
+                              <Insets left="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Label fx:id="savingAmount" alignment="CENTER" prefHeight="27.0" prefWidth="175.0" text="Saving Amount:">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </center>
+</BorderPane>

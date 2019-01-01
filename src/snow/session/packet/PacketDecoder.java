@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import snow.session.Session;
 import snow.session.packet.impl.LoginPacket;
+import snow.session.packet.impl.LogoutPacket;
 import snow.session.packet.impl.RegistrationPacket;
 
 public class PacketDecoder {
@@ -23,6 +24,9 @@ public class PacketDecoder {
 		}
 		
 		PacketType type = PacketType.getPacketTypes().get(action);
+		
+		System.out.println("Processing Packet: " + type.name());
+		
 		Packet packet;
 		
 		switch (type) {
@@ -34,6 +38,10 @@ public class PacketDecoder {
 		case REGISTER:
 			packet = new RegistrationPacket(type, data);
 			packet.process();
+			break;
+			
+		case LOGOUT:
+			new LogoutPacket(type, data).process();
 			break;
 			
 		default:

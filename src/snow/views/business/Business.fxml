@@ -76,11 +76,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TilePane fx:id="budgetTilePane" alignment="CENTER" hgap="15.0" prefHeight="442.0" prefWidth="696.0" vgap="15.0">
-                           <padding>
-                              <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-                           </padding>
-                        </TilePane>
+                        
                      </children>
                   </AnchorPane>
               </content>

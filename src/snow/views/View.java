@@ -5,13 +5,14 @@ import lombok.Setter;
 import snow.views.business.BusinessViewController;
 import snow.views.login.LoginViewController;
 import snow.views.main.MainViewController;
+import snow.views.main.TransactionViewController;
 
 public enum View {
 	
 	MAIN("Main", "Home Page", MainViewController.class, false),
 	BUSINESS("Business", "Your Business", BusinessViewController.class, false),
 	LOGIN("Login", "Login", LoginViewController.class, false),
-	LOADING("Loading", "Loading.. Please Wait", LoginViewController.class, false);
+	ADDTRANSACTION("AddTransaction", "New Transaction", TransactionViewController.class, false);
 	
 	private @Getter @Setter String name, fxml, title;
 	private @Getter @Setter Class<Controller> controller;

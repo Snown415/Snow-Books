@@ -50,7 +50,7 @@ public class LoginViewController extends Controller implements Initializable {
 		rememberUsername.setSelected(prefs.isRememberUsername());
 		autoLogin.setSelected(prefs.isAutoLogin());
 
-		if (prefs.isRememberUsername())
+		if (prefs.isRememberUsername() || prefs.isAutoLogin())
 			username.setText(prefs.getUsername());
 
 		processAutoLogin();
@@ -61,13 +61,13 @@ public class LoginViewController extends Controller implements Initializable {
 			password.setText(prefs.getPassword());
 			
 			session.getStage().setOnShown(e -> {
-				closeSplash();
-				
 				try {
 					onLogin();
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
+				
+				closeSplash();
 			});
 		}
 	}
@@ -95,11 +95,6 @@ public class LoginViewController extends Controller implements Initializable {
 
 		savePreferences();
 		
-		if (!session.getEncoder().connect()) {
-			message.setText("Couldn't connect to the server\nplease try again later.");
-			return;
-		}
-
 		Packet packet = new LoginPacket(PacketType.LOGIN, username.getText(), password.getText());
 		session.getEncoder().sendPacket(true, packet);
 	}
