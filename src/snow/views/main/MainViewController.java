@@ -1,17 +1,20 @@
 package snow.views.main;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.animation.ScaleTransition;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
@@ -21,6 +24,7 @@ import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
 import snow.views.Controller;
+import snow.views.View;
 
 public class MainViewController extends Controller implements Initializable {
 	
@@ -36,7 +40,7 @@ public class MainViewController extends Controller implements Initializable {
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		PieChart.Data[] data = new PieChart.Data[] { new PieChart.Data("Services", 0.45), new PieChart.Data("Products", 0.55) };
-		incomeChart.getData().addAll(data);	
+		incomeChart.getData().addAll(data);
 		
 		// TODO Move into separate method
 		hover.setStyle("-fx-background-color: black");
@@ -81,35 +85,22 @@ public class MainViewController extends Controller implements Initializable {
 		}	
 	}
 	
+	public void hotkeyCheck(Event e) throws IOException {
+		KeyEvent event = (KeyEvent) e;
+
+		KeyCode code = event.getCode();
+
+		if (code == KeyCode.T) {
+			session.addView(View.TOOLBAR);
+		}
+		
+		
+	}
+
+	
 	public void onLogout() {
 		Packet packet = new LogoutPacket(PacketType.LOGOUT);
 		session.getEncoder().sendPacket(true, packet);
-	}
-	
-	public void onAddBusiness() {
-		HBox pane = new HBox();
-		pane.setAlignment(Pos.TOP_CENTER);
-		pane.setStyle("-fx-background-color: gray");
-		pane.setPadding(new Insets(10));
-		
-		Label title = new Label("Your Business");
-		pane.getChildren().add(title);
-		
-		pane.setOnMouseEntered(e -> {
-			ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), pane);
-			scaleTransition.setToX(1.05f);
-			scaleTransition.setToY(1.05f);
-			scaleTransition.play();
-		});
-
-		pane.setOnMouseExited(e -> {
-			ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), pane);
-			scaleTransition.setToX(1f);
-			scaleTransition.setToY(1f);
-			scaleTransition.play();
-		});
-		
-		budgetPane.getChildren().add(pane);
 	}
 
 }

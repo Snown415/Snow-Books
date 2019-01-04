@@ -16,7 +16,7 @@ import snow.session.Session;
 public abstract class Controller {
 	
 	@Getter @Setter
-	protected URL Resource;
+	protected URL resource;
 	
 	@Getter @Setter
 	protected Session session = Client.getSession();
