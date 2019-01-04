@@ -3,7 +3,9 @@ package snow.session;
 import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
@@ -78,6 +80,21 @@ public class Session {
 			controller = viewManager.getLoader().getController();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+	}
+	
+	public void addSubview(Node node, View subview) {
+		
+		if (!subview.isSubview()) {
+			System.err.println("This view isn't a subview; " + subview.name());
+			return;
+		}
+		
+		if (node instanceof StackPane) {
+			StackPane pane = (StackPane) node;
+			
+			pane.getChildren().add(node);
 		}
 		
 	}

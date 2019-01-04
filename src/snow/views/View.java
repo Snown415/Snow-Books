@@ -9,22 +9,25 @@ import snow.views.main.TransactionViewController;
 
 public enum View {
 	
-	MAIN("Main", "Home Page", MainViewController.class, false),
-	BUSINESS("Business", "Your Business", BusinessViewController.class, false),
-	LOGIN("Login", "Login", LoginViewController.class, false),
-	ADDTRANSACTION("AddTransaction", "New Transaction", TransactionViewController.class, false);
+	MAIN("Main", "Home Page", MainViewController.class, false, false),
+	BUSINESS("Business", "Your Business", BusinessViewController.class, false, false),
+	LOGIN("Login", "Login", LoginViewController.class, false, false),
+	ADD_TRANSACTION("AddTransaction", null, TransactionViewController.class, false, true),
+	RECENT_TRANSACTIONS("RecentTransactions", null, MainViewController.class, false, true);
 	
 	private @Getter @Setter String name, fxml, title;
 	private @Getter @Setter Class<Controller> controller;
 	private @Getter @Setter boolean resizeable;
+	private @Getter @Setter boolean subview;
 	
 	@SuppressWarnings("unchecked")
-	private View(String name, String title, Class<?> controller, Boolean resize) {
+	private View(String name, String title, Class<?> controller, Boolean resize, Boolean subview) {
 		setName(name);
 		setTitle("Snow Books | " + title);
 		setFxml(name + ".fxml");
 		setController((Class<Controller>) controller);
 		setResizeable(resize);
+		setSubview(subview);
 	}
 
 }
