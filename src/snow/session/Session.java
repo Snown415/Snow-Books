@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
 import snow.session.packet.Packet;
@@ -18,57 +19,84 @@ import snow.views.View;
 import snow.views.ViewManager;
 
 /**
- * Contains data of the current session;
- * Instance is created upon launching. 
+ * Contains data of the current session; Instance is created upon launching.
  * 
  * @author Snow
  *
  */
 public class Session {
-	
+
 	private @Getter @Setter User user;
 	private @Getter @Setter Stage stage;
 	private @Getter @Setter ViewManager viewManager;
-	
+
 	private @Getter @Setter PacketEncoder encoder;
 	private @Getter @Setter PacketDecoder decoder;
 	private @Getter @Setter Preferences prefs;
-	
+
 	private @Getter @Setter View currentView;
 	private @Getter @Setter Scene scene;
 	private @Getter Controller controller;
-	
+
 	public Session(User user) {
 		setViewManager(new ViewManager(this));
-		
+
 		if (user == null)
 			setController(View.LOGIN, false);
-		
+
 		encoder = new PacketEncoder(this);
 		decoder = new PacketDecoder(this);
 	}
-	
+
 	public void setController(View view, boolean setView) {
 		controller = ViewManager.getController(view);
-		
+
 		if (controller == null)
 			return;
-		
-		controller.setResource(controller.getClass().getResource(view.getFxml()));
+
+		controller.setResource(view.getResource());
 		setCurrentView(view);
-		
+
 		if (setView)
 			setView();
 	}
-	
+
+	public Stage secondStage;
+
+	public void addView(View view) {
+		
+		if (secondStage != null) {
+			secondStage.close();
+		}
+		
+		secondStage = new Stage();
+		Controller controller = ViewManager.getController(view);
+		FXMLLoader loader = new FXMLLoader(controller.getClass().getResource(view.getFxml()));
+
+		try {
+			secondStage.setScene(new Scene(loader.load()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		secondStage.initStyle(StageStyle.UTILITY);
+		secondStage.setTitle(view.getTitle());
+		secondStage.setResizable(view.isResizeable());
+		secondStage.show();
+	}
+
+	public void removeAdditionalViews() {
+
+	}
+
 	public void setView() {
 		if (currentView == null) {
 			System.err.println("Invalid currentView");
 			return;
 		}
-		
+
 		viewManager.setLoader(new FXMLLoader(controller.getResource()));
-		
+
 		try {
 			stage.setScene(new Scene(viewManager.getLoader().load()));
 			stage.setTitle(currentView.getTitle());
@@ -79,12 +107,17 @@ public class Session {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public void finish() {
 		Packet packet = new LogoutPacket(PacketType.LOGOUT);
 		encoder.sendPacket(false, packet);
+		
+		if (secondStage != null) {
+			secondStage.close();
+			secondStage = null;
+		}
 	}
 
 }

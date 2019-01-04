@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="mainPane" maxHeight="600.0" maxWidth="510.0" minHeight="200.0" minWidth="100.0" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.toolbar.ToolbarViewController">
+   <top>
+      <AnchorPane prefHeight="59.0" prefWidth="305.0" BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar fx:id="toolbar" layoutX="45.0" layoutY="10.0" prefHeight="59.0" prefWidth="305.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </top>
+   <center>
+      <AnchorPane fx:id="content" prefHeight="541.0" prefWidth="422.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>
