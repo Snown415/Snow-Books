@@ -1,0 +1,20 @@
+.list-cell:selected:focused, .list-cell:selected {
+	-fx-text-fill: black;
+	-fx-background-color: #cccccc;
+}
+
+.list-cell {
+	-fx-text-fill: black;
+}
+
+.list-cell:odd {
+	-fx-background-color: #b3b3b3;
+}
+
+.list-cell:even {
+	-fx-background-color: #808080;
+}
+
+.list-cell:empty {
+	-fx-background-color: white;
+}

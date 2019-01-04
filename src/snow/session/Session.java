@@ -3,8 +3,12 @@ package snow.session;
 import java.io.IOException;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -39,6 +43,10 @@ public class Session {
 	private @Getter @Setter View currentView;
 	private @Getter @Setter Scene scene;
 	private @Getter Controller controller;
+	
+	// Tooltip
+	protected @Getter @Setter HBox hover;
+	protected @Getter @Setter Label hoverText;
 
 	public Session(User user) {
 		setViewManager(new ViewManager(this));
@@ -112,19 +120,31 @@ public class Session {
 
 	}
 	
-	public void addSubview(Node node, View subview) {
+	@SuppressWarnings("unchecked")
+	public Node addSubview(Node node, View subview) {
 		
 		if (!subview.isSubview()) {
 			System.err.println("This view isn't a subview; " + subview.name());
-			return;
+			return null;
 		}
 		
-		if (node instanceof StackPane) {
-			StackPane pane = (StackPane) node;
+		if (node instanceof ListView) {
+			ListView<Node> pane = (ListView<Node>) node;
+			Node view;
 			
-			pane.getChildren().add(node);
+			try {
+				view = FXMLLoader.load(subview.getResource());
+				StackPane layout = new StackPane();
+				layout.setAlignment(Pos.CENTER);
+				layout.getChildren().add(view);
+				pane.getItems().add(layout);
+				return view;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
 		}
 		
+		return null;
 	}
 	
 	public void finish() {

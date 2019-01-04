@@ -20,4 +20,5 @@ public abstract class Controller {
 	
 	@Getter @Setter
 	protected Session session = Client.getSession();
+
 }

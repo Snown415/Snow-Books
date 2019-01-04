@@ -15,7 +15,9 @@ public enum View {
 	MAIN("Main", "Home Page", MainViewController.class, false, false),
 	BUSINESS("Business", "Your Business", BusinessViewController.class, false, false),
 	LOGIN("Login", "Login", LoginViewController.class, false, false),
+	TOOLBAR("Toolbar", "Toolbar", ToolbarViewController.class, false, false),
 	ADD_TRANSACTION("AddTransaction", null, TransactionViewController.class, false, true),
+	CHART("PageItem", null, MainViewController.class, false, true),
 	RECENT_TRANSACTIONS("RecentTransactions", null, MainViewController.class, false, true);
 	
 	private @Getter @Setter String name, fxml, title;
