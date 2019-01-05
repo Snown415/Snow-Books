@@ -17,6 +17,7 @@ public class PacketDecoder {
 
 	public void handleResponse(Object... data) {
 		Integer action = (Integer) data[0];
+		session.setLastPacket(System.currentTimeMillis());
 		
 		if (!PacketType.getPacketTypes().containsKey(action)) {
 			System.err.println("Invalid Packet; ID: " + action + "");

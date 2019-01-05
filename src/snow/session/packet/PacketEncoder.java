@@ -47,6 +47,8 @@ public class PacketEncoder {
 			a.show();
 			return;
 		}
+		
+		session.setLastPacket(System.currentTimeMillis());
 
 		ObjectOutputStream out;
 		ObjectInputStream in;

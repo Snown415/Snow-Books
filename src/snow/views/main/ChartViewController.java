@@ -50,7 +50,7 @@ public class ChartViewController extends Controller implements Initializable {
 		hoverText.setAlignment(Pos.CENTER);
 		hover.getChildren().add(hoverText);
 		hover.setPrefHeight(25);
-		hover.setPrefWidth(100);
+		hover.setPrefWidth(175);
 		glassPane.getChildren().add(hover);
 		glassPane.setPickOnBounds(false);
 	}
@@ -61,7 +61,7 @@ public class ChartViewController extends Controller implements Initializable {
 		String percent = String.format("%.2f", d.getPieValue() * 100);
 
 		node.setOnMouseEntered(e -> {
-			hoverText.setText(percent + "%");
+			hoverText.setText(d.getName() + ": " + percent + "%");
 			hover.setVisible(true);
 
 			ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), node);

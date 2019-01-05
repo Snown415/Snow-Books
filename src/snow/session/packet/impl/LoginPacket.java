@@ -34,6 +34,7 @@ public class LoginPacket extends Packet {
 		
 		session.setUser(user);
 		session.setController(View.MAIN, true);
+		session.startSession();
 	}
 
 }
