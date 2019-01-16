@@ -10,11 +10,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Pagination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
@@ -23,10 +20,7 @@ import snow.views.View;
 
 public class MainViewController extends Controller implements Initializable {
 
-	private @FXML TilePane budgetPane;
 	private @FXML PieChart incomeChart, expenseChart, savingsChart;
-	private @FXML Pagination pagination;
-	private @FXML HBox chartContainer;
 	private @FXML ListView<Node> contentList;
 
 	@Override
@@ -43,7 +37,6 @@ public class MainViewController extends Controller implements Initializable {
 		if (code == KeyCode.T) {
 			session.addView(View.TOOLBAR);
 		}
-
 	}
 
 	public void onLogout() {

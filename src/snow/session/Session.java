@@ -108,7 +108,7 @@ public class Session {
 
 		@Override
 		protected Void call() throws Exception {
-			if (System.currentTimeMillis() - lastPacket >= (1000)) {
+			if (System.currentTimeMillis() - lastPacket >= (5 * 60 * 1000)) {
 				setTimedOut(true);
 				cancel();
 			}

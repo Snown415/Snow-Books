@@ -1,7 +1,3 @@
-.chart-plot-background {
-	-fx-background-color: white;
-}
-
-.chart:selected {
+.chart-content:selected {
 	-fx-background-color: white;
 }

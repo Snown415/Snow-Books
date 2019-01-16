@@ -1,6 +1,6 @@
 .list-cell:selected:focused, .list-cell:selected {
 	-fx-text-fill: black;
-	-fx-background-color: #cccccc;
+	-fx-background-color: #000000;
 }
 
 .list-cell {
