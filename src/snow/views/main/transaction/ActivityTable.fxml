@@ -11,7 +11,7 @@
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <LineChart id="chart-box" fx:id="activityChart" alternativeRowFillVisible="false" layoutX="66.0" legendSide="RIGHT" legendVisible="false" prefHeight="358.0" prefWidth="694.0" title="Annual Performance" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <LineChart id="chart-box" fx:id="activityChart" alternativeRowFillVisible="false" layoutX="66.0" legendSide="RIGHT" legendVisible="false" prefHeight="358.0" prefWidth="694.0" stylesheets="@../../styles/ActivityChart.css" title="Annual Performance" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <xAxis>
                   <CategoryAxis fx:id="chartCategories" autoRanging="false" endMargin="0.0" prefWidth="963.0" tickLabelGap="20.0">
                      <padding>

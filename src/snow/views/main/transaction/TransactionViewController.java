@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -37,6 +38,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import snow.Client;
 import snow.session.packet.impl.TransactionPacket;
 import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
@@ -55,7 +57,7 @@ public class TransactionViewController extends Controller implements Initializab
 	private @FXML TableView<Transaction> activityTable;
 	private @FXML TableColumn<Transaction, Object> type, name, amount, recipient, saving, savingAmount, profit, date,
 			date_Month, date_Day;
-	
+
 	private @FXML LineChart<String, Double> activityChart;
 	private @FXML CategoryAxis chartCategories;
 	private String[] months = new DateFormatSymbols().getShortMonths();
@@ -65,16 +67,33 @@ public class TransactionViewController extends Controller implements Initializab
 			"amount", "saving%", "saving" };
 	private LinkedHashMap<String, Object> currentValues = new LinkedHashMap<>();
 
-	private ObservableList<String> types = FXCollections.observableArrayList("Income", "Expense");
+	private ObservableList<String> types = FXCollections.observableArrayList("Service", "Contract", "Business Expense",
+			"Personal Expense", "Savings");
 	private ObservableList<String> currencies = FXCollections.observableArrayList("USD", "EUR");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 	}
-	
+
 	public void handleTable() {
 		newType.setItems(types);
+
+		newType.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+			if (nv == null)
+				return;
+
+			if (nv.equals("Savings")) {
+				newSaving.getValueFactory().setValue(100.0);
+				newSaving.setDisable(true);
+				newRecipient.setDisable(true);
+			} else {
+				if (newSaving.isDisable())
+					newRecipient.setDisable(false);
+					newSaving.setDisable(false);
+			}
+		});
+
 		currencyType.setItems(currencies);
 		newType.getSelectionModel().select(0);
 		currencyType.getSelectionModel().select(0);
@@ -90,7 +109,7 @@ public class TransactionViewController extends Controller implements Initializab
 		refreshValues();
 		activityTable.getItems().setAll(Client.getTransactions().values());
 	}
-	
+
 	public void handleChart() {
 		activityChart.setCreateSymbols(false);
 		chartCategories.setCategories(categories);
@@ -110,15 +129,16 @@ public class TransactionViewController extends Controller implements Initializab
 
 		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.ADD_TRANSACTION, true, array));
 	}
-	
+
 	public void hotkeyCheck(Event e) throws IOException {
 		KeyEvent event = (KeyEvent) e;
 
 		KeyCode code = event.getCode();
-		
+
 		if (code == KeyCode.DELETE) {
 			System.out.println("Removing all data");
-			session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, "REMOVEALLDATA"));
+			session.getEncoder().sendPacket(true,
+					new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, "REMOVEALLDATA"));
 			activityTable.getItems().clear();
 			Client.getTransactions().clear();
 		}
@@ -152,17 +172,18 @@ public class TransactionViewController extends Controller implements Initializab
 		date_Day.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("day"));
 
 		MenuItem[] items = { new MenuItem("Edit"), new MenuItem("Remove") };
-		
+
 		items[0].setOnAction(e -> {
 			// TODO edit transaction
 		});
-		
+
 		items[1].setOnAction(e -> {
 			Transaction selection = activityTable.getSelectionModel().getSelectedItem();
 			activityTable.getItems().remove(selection);
-			session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, selection.getName()));
+			session.getEncoder().sendPacket(true,
+					new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, selection.getName()));
 		});
-		
+
 		ContextMenu menu = new ContextMenu(items);
 
 		for (TableColumn<Transaction, ?> column : activityTable.getColumns()) {
@@ -191,8 +212,7 @@ public class TransactionViewController extends Controller implements Initializab
 		}
 
 	}
-	
-	
+
 	private void plotInitialData() {
 		XYChart.Series<String, Double> series = new XYChart.Series<>();
 		XYChart.Data<String, Double> data;
@@ -207,7 +227,7 @@ public class TransactionViewController extends Controller implements Initializab
 
 			if (transactionData.containsKey(month)) {
 				List<String> value = transactionData.get(month);
-				
+
 				value.add("$" + amount + " on " + t.getDate().toString());
 			} else {
 				LinkedList<String> list = new LinkedList<>();
@@ -236,7 +256,24 @@ public class TransactionViewController extends Controller implements Initializab
 			VBox v = new VBox();
 			Tooltip.install(v, tip);
 
-			v.getChildren().add(new Label(String.valueOf(monthlyData.get(key))));
+			Label value = new Label(String.valueOf(monthlyData.get(key)));
+			value.setStyle("-fx-font-size:12");
+			v.getChildren().add(value);
+			
+			v.setOnMouseEntered(e -> {
+				ScaleTransition scale = new ScaleTransition(Duration.millis(100), v);
+				scale.setToX(1.5);
+				scale.setToY(1.5);
+				scale.play();
+			});
+			
+			v.setOnMouseExited(e -> {
+				ScaleTransition scale = new ScaleTransition(Duration.millis(100), v);
+				scale.setToX(1);
+				scale.setToY(1);
+				scale.play();
+			});
+			
 			data.setNode(v);
 
 			series.getData().add(data);

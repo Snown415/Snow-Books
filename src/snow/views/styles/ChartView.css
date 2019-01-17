@@ -1,3 +1,9 @@
 .chart-content:selected {
-	-fx-background-color: white;
+	-fx-background-color: black;
 }
+
+#incomeChart .data0.chart-pie { -fx-pie-color: turquoise; }
+#incomeChart .data1.chart-pie { -fx-pie-color: aquamarine; }
+
+#expenseChart .data0.chart-pie { -fx-pie-color: orange; }
+#expenseChart .data1.chart-pie { -fx-pie-color: red; }

@@ -30,10 +30,11 @@ public class LoginPacket extends Packet {
 			return;
 		}
 		
+		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REQUEST_TRANSACTIONS, true));
+		
 		String username = (String) getData()[2];
 		User user = new User(username);
 		session.setUser(user);
-		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REQUEST_TRANSACTIONS, true));
 		session.setController(View.MAIN, true);
 		session.startSession();
 	}
