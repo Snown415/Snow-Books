@@ -19,11 +19,14 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
+import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketDecoder;
 import snow.session.packet.PacketEncoder;
 import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
+import snow.session.packet.impl.TransactionPacket;
+import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 import snow.user.User;
 import snow.views.Controller;
 import snow.views.View;
@@ -120,6 +123,7 @@ public class Session {
 	};
 
 	public void startSession() {
+		
 		userService.scheduleAtFixedRate(userTask, 30, 30, TimeUnit.SECONDS);
 		
 		userTask.setOnCancelled(e -> {

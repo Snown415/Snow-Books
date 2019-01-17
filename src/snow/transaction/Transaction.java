@@ -1,4 +1,4 @@
-package snow.user;
+package snow.transaction;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;

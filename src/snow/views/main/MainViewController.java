@@ -30,7 +30,6 @@ import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
 import snow.views.Controller;
 import snow.views.View;
-import snow.views.ViewManager;
 
 public class MainViewController extends Controller implements Initializable {
 

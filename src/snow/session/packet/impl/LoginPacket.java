@@ -4,6 +4,7 @@ import snow.Client;
 import snow.session.Session;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketType;
+import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 import snow.user.User;
 import snow.views.View;
 import snow.views.login.LoginViewController;
@@ -31,8 +32,8 @@ public class LoginPacket extends Packet {
 		
 		String username = (String) getData()[2];
 		User user = new User(username);
-		
 		session.setUser(user);
+		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REQUEST_TRANSACTIONS, true));
 		session.setController(View.MAIN, true);
 		session.startSession();
 	}

@@ -4,26 +4,35 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
+import snow.Client;
 import snow.session.packet.impl.TransactionPacket;
 import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
-import snow.user.Transaction;
+import snow.transaction.Transaction;
 import snow.views.Controller;
 
 public class TransactionViewController extends Controller implements Initializable {
@@ -48,7 +57,6 @@ public class TransactionViewController extends Controller implements Initializab
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		System.out.println("Initiating");
 		newType.setItems(types);
 		currencyType.setItems(currencies);
 		newType.getSelectionModel().select(0);
@@ -63,9 +71,11 @@ public class TransactionViewController extends Controller implements Initializab
 
 		handleTableFactories();
 		refreshValues();
+		activityTable.getItems().setAll(Client.getTransactions().values());
 	}
 
 	public void onSubmit() {
+		refreshValues();
 		int length = currentValues.size();
 		Object[] array = new Object[length + 1];
 		int count = 0;
@@ -79,14 +89,26 @@ public class TransactionViewController extends Controller implements Initializab
 	}
 
 	public void addTransaction() {
+		LinkedHashMap<String, Object> map = currentValues;
 		refreshValues();
-		
-		Transaction t = new Transaction(currentValues.get("type"), currentValues.get("currencyType"),
-				currentValues.get("budget"), currentValues.get("date"), currentValues.get("id"),
-				currentValues.get("recipient"), currentValues.get("email"), currentValues.get("phone"),
-				currentValues.get("amount"), currentValues.get("saving%"));
-		
+
+		Transaction t = new Transaction(map.get("type"), map.get("currencyType"), map.get("budget"), map.get("date"),
+				map.get("id"), map.get("recipient"), map.get("email"), map.get("phone"), map.get("amount"),
+				map.get("saving%"));
+
 		activityTable.getItems().add(t);
+	}
+
+	public void addTransaction(Transaction t) {
+		activityTable.getItems().add(t);
+	}
+
+	public void addTransactions(Collection<Transaction> transactions) {
+		activityTable.getItems().addAll(transactions);
+	}
+	
+	public void removeTransaction(String name) {
+		Client.getTransactions().remove(name);
 	}
 
 	private void handleTableFactories() {
@@ -99,6 +121,45 @@ public class TransactionViewController extends Controller implements Initializab
 		profit.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("profit"));
 		date_Month.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("month"));
 		date_Day.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("day"));
+
+		MenuItem[] items = { new MenuItem("Edit"), new MenuItem("Remove") };
+		
+		items[0].setOnAction(e -> {
+			// TODO edit transaction
+		});
+		
+		items[1].setOnAction(e -> {
+			Transaction selection = activityTable.getSelectionModel().getSelectedItem();
+			session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, selection.getName()));
+		});
+		
+		ContextMenu menu = new ContextMenu(items);
+
+		for (TableColumn<Transaction, ?> column : activityTable.getColumns()) {
+
+			@SuppressWarnings("unchecked")
+			TableColumn<Transaction, Object> c = (TableColumn<Transaction, Object>) column;
+
+			c.setCellFactory(new Callback<TableColumn<Transaction, Object>, TableCell<Transaction, Object>>() {
+				@Override
+				public TableCell<Transaction, Object> call(TableColumn<Transaction, Object> col) {
+					final TableCell<Transaction, Object> cell = new TableCell<Transaction, Object>() {
+						@Override
+						protected void updateItem(Object item, boolean empty) {
+							super.updateItem(item, empty);
+							if (empty || item == null) {
+								setText(null);
+							} else {
+								setContextMenu(menu);
+								setText(item.toString());
+							}
+						}
+					};
+					return cell;
+				}
+			});
+		}
+
 	}
 
 	private void refreshValues() {
