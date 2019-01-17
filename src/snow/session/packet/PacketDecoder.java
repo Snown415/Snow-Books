@@ -6,6 +6,8 @@ import snow.session.Session;
 import snow.session.packet.impl.LoginPacket;
 import snow.session.packet.impl.LogoutPacket;
 import snow.session.packet.impl.RegistrationPacket;
+import snow.session.packet.impl.TransactionPacket;
+import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 
 public class PacketDecoder {
 	
@@ -43,6 +45,11 @@ public class PacketDecoder {
 			
 		case LOGOUT:
 			new LogoutPacket(type, data).process();
+			break;
+			
+		case TRANSACTION:
+			int ordinal = (int) data[1];
+			new TransactionPacket(TransactionProcesser.values()[ordinal], false, data).process();
 			break;
 			
 		default:

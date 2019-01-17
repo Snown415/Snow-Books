@@ -9,7 +9,8 @@ public enum PacketType {
 	
 	LOGIN(1),
 	REGISTER(2),
-	LOGOUT(3);
+	LOGOUT(3),
+	TRANSACTION(4);
 	
 	private @Getter @Setter int packetId;
 	

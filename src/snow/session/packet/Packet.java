@@ -14,6 +14,10 @@ public abstract class Packet {
 		setType(type);
 		setPacketId(type.getPacketId());
 		setData(data);
+		rebuild();
+	}
+	
+	public void rebuild() {
 		fullPacket = new Object[data.length + 1];
 		System.arraycopy(data, 0, fullPacket, 1, data.length);
 		fullPacket[0] = packetId;
