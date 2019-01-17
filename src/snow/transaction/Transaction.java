@@ -18,27 +18,32 @@ public class Transaction implements Serializable {
 	private @Getter @Setter String month;
 	private @Getter @Setter int day;
 
-	public Transaction(Object type, Object currency, Object budget, Object date, Object name, Object recipient, Object email, Object phone, Object amount, Object savingPercent) {
+	public Transaction(Object type, Object currency, Object budget, Object date, Object id, Object recipient, Object email, Object phone, Object amount, Object savingPercent) {
 		setType((String) type);
 		setCurrencyType((String) currency);
 		setBudget((String) budget);
 		setDate((LocalDate) date);
-		setName((String) name);
+		setName((String) id);
 		setRecipient((String) recipient);
 		setEmail((String) email);
 		setPhone((String) phone);
-		setAmount(amount == null ? 0 : (double) amount);
-		setSavingPercent(savingPercent == null ? 0 : (double) savingPercent);
-		setSavingAmount(determineSavingAmount());
-		setProfit(getAmount() - getSavingAmount());
+		setAmount(amount == null ? 0 : formatDouble((double) amount));
+		setSavingPercent(savingPercent == null ? 0 : formatDouble((double) savingPercent));
+		setSavingAmount(formatDouble(determineSavingAmount()));
+		setProfit(formatDouble(getAmount() - getSavingAmount()));
 		
 		setMonth(((LocalDate) date).getMonth().toString());
 		setDay(((LocalDate) date).getDayOfMonth());
 	}
 	
-	private Double determineSavingAmount() {
+	private Double formatDouble(double value) {
 		NumberFormat formatter = new DecimalFormat("#0.00");
-		double formatted = Double.parseDouble(formatter.format(savingPercent));
+		double formatted = Double.parseDouble(formatter.format(value));
+		return formatted;
+	}
+	
+	private Double determineSavingAmount() {
+		double formatted = formatDouble(savingPercent);
 
 		if (formatted > 100)
 			formatted = 100;
@@ -48,6 +53,6 @@ public class Transaction implements Serializable {
 
 		double percent = formatted / 100;
 
-		return Double.parseDouble(formatter.format(amount * percent));
+		return formatDouble(amount * percent);
 	}
 }

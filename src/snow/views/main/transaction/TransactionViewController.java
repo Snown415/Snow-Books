@@ -1,33 +1,41 @@
 package snow.views.main.transaction;
 
+import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import snow.Client;
 import snow.session.packet.impl.TransactionPacket;
@@ -47,6 +55,11 @@ public class TransactionViewController extends Controller implements Initializab
 	private @FXML TableView<Transaction> activityTable;
 	private @FXML TableColumn<Transaction, Object> type, name, amount, recipient, saving, savingAmount, profit, date,
 			date_Month, date_Day;
+	
+	private @FXML LineChart<String, Double> activityChart;
+	private @FXML CategoryAxis chartCategories;
+	private String[] months = new DateFormatSymbols().getShortMonths();
+	private ObservableList<String> categories = FXCollections.observableArrayList(months);
 
 	private String[] valueKeys = { "type", "currencytype", "budget", "date", "id", "recipient", "email", "phone",
 			"amount", "saving%", "saving" };
@@ -57,6 +70,10 @@ public class TransactionViewController extends Controller implements Initializab
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+	}
+	
+	public void handleTable() {
 		newType.setItems(types);
 		currencyType.setItems(currencies);
 		newType.getSelectionModel().select(0);
@@ -73,11 +90,17 @@ public class TransactionViewController extends Controller implements Initializab
 		refreshValues();
 		activityTable.getItems().setAll(Client.getTransactions().values());
 	}
+	
+	public void handleChart() {
+		activityChart.setCreateSymbols(false);
+		chartCategories.setCategories(categories);
+		plotInitialData();
+	}
 
 	public void onSubmit() {
 		refreshValues();
 		int length = currentValues.size();
-		Object[] array = new Object[length + 1];
+		Object[] array = new Object[length];
 		int count = 0;
 
 		for (String key : currentValues.keySet()) {
@@ -86,6 +109,20 @@ public class TransactionViewController extends Controller implements Initializab
 		}
 
 		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.ADD_TRANSACTION, true, array));
+	}
+	
+	public void hotkeyCheck(Event e) throws IOException {
+		KeyEvent event = (KeyEvent) e;
+
+		KeyCode code = event.getCode();
+		
+		if (code == KeyCode.DELETE) {
+			System.out.println("Removing all data");
+			session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, "REMOVEALLDATA"));
+			activityTable.getItems().clear();
+			Client.getTransactions().clear();
+		}
+
 	}
 
 	public void addTransaction() {
@@ -101,14 +138,6 @@ public class TransactionViewController extends Controller implements Initializab
 
 	public void addTransaction(Transaction t) {
 		activityTable.getItems().add(t);
-	}
-
-	public void addTransactions(Collection<Transaction> transactions) {
-		activityTable.getItems().addAll(transactions);
-	}
-	
-	public void removeTransaction(String name) {
-		Client.getTransactions().remove(name);
 	}
 
 	private void handleTableFactories() {
@@ -130,6 +159,7 @@ public class TransactionViewController extends Controller implements Initializab
 		
 		items[1].setOnAction(e -> {
 			Transaction selection = activityTable.getSelectionModel().getSelectedItem();
+			activityTable.getItems().remove(selection);
 			session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, selection.getName()));
 		});
 		
@@ -160,6 +190,59 @@ public class TransactionViewController extends Controller implements Initializab
 			});
 		}
 
+	}
+	
+	
+	private void plotInitialData() {
+		XYChart.Series<String, Double> series = new XYChart.Series<>();
+		XYChart.Data<String, Double> data;
+
+		LinkedHashMap<String, Double> monthlyData = new LinkedHashMap<>();
+		LinkedHashMap<String, List<String>> transactionData = new LinkedHashMap<>();
+
+		// Generate Map TODO store map in InitialData
+		for (Transaction t : Client.getTransactions().values()) {
+			String month = months[t.getDate().getMonthValue() - 1];
+			double amount = formatDouble(t.getAmount());
+
+			if (transactionData.containsKey(month)) {
+				List<String> value = transactionData.get(month);
+				
+				value.add("$" + amount + " on " + t.getDate().toString());
+			} else {
+				LinkedList<String> list = new LinkedList<>();
+				list.add("$" + amount + " on " + t.getDate().toString());
+				transactionData.put(month, list);
+			}
+
+			if (monthlyData.containsKey(month)) {
+				Double value = monthlyData.get(month);
+				monthlyData.put(month, value + amount);
+			} else
+				monthlyData.put(month, amount);
+		}
+
+		// Use Map to plot points
+		for (String key : monthlyData.keySet()) {
+			data = new XYChart.Data<>(key, monthlyData.get(key));
+
+			StringBuilder sb = new StringBuilder();
+			for (String s : transactionData.get(key)) {
+				sb.append(s + "\n");
+			}
+
+			Tooltip tip = new Tooltip(sb.toString()); // TODO make custom tooltip system
+			tip.setStyle("-fx-font-size:15;");
+			VBox v = new VBox();
+			Tooltip.install(v, tip);
+
+			v.getChildren().add(new Label(String.valueOf(monthlyData.get(key))));
+			data.setNode(v);
+
+			series.getData().add(data);
+		}
+
+		activityChart.getData().add(series);
 	}
 
 	private void refreshValues() {

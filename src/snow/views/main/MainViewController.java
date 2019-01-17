@@ -5,6 +5,7 @@ import static snow.views.View.TRANSACTION_TABLE;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
@@ -30,6 +31,7 @@ import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
 import snow.views.Controller;
 import snow.views.View;
+import snow.views.main.transaction.TransactionViewController;
 
 public class MainViewController extends Controller implements Initializable {
 
@@ -79,13 +81,29 @@ public class MainViewController extends Controller implements Initializable {
 		});
 
 		for (MainTool t : MainTool.values()) {
+			LinkedHashMap<View, Controller> map = Client.getSession().getSubviews();
 			Node node;
 
 			try {
 				System.out.println("Loading resource " + t.getView().getResource());
 				FXMLLoader loader = new FXMLLoader(t.getView().getResource());
 				node = loader.load();
-				Client.getSession().getSubviews().put(t.getView(), loader.getController());
+				
+				TransactionViewController controller = (TransactionViewController) loader.getController();
+				
+				switch (t.getView()) {
+				case ACTIVITY_CHART:
+					controller.handleChart();
+					break;
+				case TRANSACTION_TABLE:
+					controller.handleTable();
+					break;
+				default:
+					break;
+				
+				}
+				
+				map.put(t.getView(), loader.getController());	
 				TitledPane pane = new TitledPane(t.getTitle(), node);
 				tools.getPanes().add(pane);
 			} catch (IOException e) {
