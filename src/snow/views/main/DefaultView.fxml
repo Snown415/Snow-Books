@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckComboBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="358.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <LineChart id="chart-box" fx:id="activityChart" alternativeRowFillVisible="false" layoutX="66.0" legendSide="RIGHT" legendVisible="false" prefHeight="358.0" prefWidth="694.0" title="Annual Performance" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <xAxis>
+                  <CategoryAxis fx:id="chartCategories" prefWidth="963.0" side="RIGHT" />
+               </xAxis>
+               <yAxis>
+                  <NumberAxis prefHeight="0.0" prefWidth="28.0" side="LEFT" />
+               </yAxis>
+            </LineChart>
+         </children>
+      </AnchorPane>
+   </center>
+   <right>
+      <VBox alignment="CENTER" prefHeight="358.0" prefWidth="139.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <children>
+            <CheckComboBox prefHeight="25.0" prefWidth="138.0" />
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

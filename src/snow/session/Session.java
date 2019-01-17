@@ -1,6 +1,7 @@
 package snow.session;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,6 +48,7 @@ public class Session {
 	private @Getter @Setter View currentView;
 	private @Getter @Setter Scene scene;
 	private @Getter Controller controller;
+	private @Getter LinkedHashMap<View, Controller> subviews = new LinkedHashMap<>();
 	
 	private @Getter @Setter long lastPacket;
 	private @Getter @Setter boolean timedOut;
@@ -171,7 +173,7 @@ public class Session {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}		
-		}
+		} 
 		
 		return null;
 	}

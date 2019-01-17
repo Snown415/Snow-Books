@@ -73,7 +73,8 @@ public class LoginViewController extends Controller implements Initializable {
 	}
 
 	public void setLoginMessage(String value) {
-		message.setText(value);
+		if (message != null)
+			message.setText(value);
 	}
 
 	public void onRegister() {
