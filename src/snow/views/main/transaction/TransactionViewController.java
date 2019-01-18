@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -36,9 +35,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import javafx.util.Duration;
+import lombok.Getter;
 import snow.Client;
 import snow.session.packet.impl.TransactionPacket;
 import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
@@ -53,6 +53,7 @@ public class TransactionViewController extends Controller implements Initializab
 	private @FXML TextField transactionId, newRecipient, email, phone, newAmount;
 	private @FXML Spinner<Double> newSaving;
 	private @FXML Tooltip savingTip;
+	private @Getter @FXML AnchorPane glassPane;
 
 	private @FXML TableView<Transaction> activityTable;
 	private @FXML TableColumn<Transaction, Object> type, name, amount, recipient, saving, savingAmount, profit, date,
@@ -76,6 +77,11 @@ public class TransactionViewController extends Controller implements Initializab
 
 	}
 
+	public void initTooltip() {
+		setGlassPane(glassPane);
+		generateTooltip();
+	}
+
 	public void handleTable() {
 		newType.setItems(types);
 
@@ -90,7 +96,7 @@ public class TransactionViewController extends Controller implements Initializab
 			} else {
 				if (newSaving.isDisable())
 					newRecipient.setDisable(false);
-					newSaving.setDisable(false);
+				newSaving.setDisable(false);
 			}
 		});
 
@@ -250,30 +256,14 @@ public class TransactionViewController extends Controller implements Initializab
 			for (String s : transactionData.get(key)) {
 				sb.append(s + "\n");
 			}
-
-			Tooltip tip = new Tooltip(sb.toString()); // TODO make custom tooltip system
-			tip.setStyle("-fx-font-size:15;");
 			VBox v = new VBox();
-			Tooltip.install(v, tip);
 
 			Label value = new Label(String.valueOf(monthlyData.get(key)));
 			value.setStyle("-fx-font-size:12");
 			v.getChildren().add(value);
-			
-			v.setOnMouseEntered(e -> {
-				ScaleTransition scale = new ScaleTransition(Duration.millis(100), v);
-				scale.setToX(1.5);
-				scale.setToY(1.5);
-				scale.play();
-			});
-			
-			v.setOnMouseExited(e -> {
-				ScaleTransition scale = new ScaleTransition(Duration.millis(100), v);
-				scale.setToX(1);
-				scale.setToY(1);
-				scale.play();
-			});
-			
+
+			processTip(v, sb.toString(), 1.5);
+
 			data.setNode(v);
 
 			series.getData().add(data);

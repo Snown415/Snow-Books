@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -25,7 +23,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -54,9 +52,11 @@ public class MainViewController extends Controller implements Initializable {
 
 	private @FXML PieChart incomeChart, expenseChart, savingsChart;
 	private @FXML Accordion tools;
+	private @FXML @Getter AnchorPane glassPane;
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		setGlassPane(glassPane);
 
 		int service = 0, contract = 0, business = 0, personal = 0;
 		int totalIncome = 0, totalExpense = 0;
@@ -141,6 +141,11 @@ public class MainViewController extends Controller implements Initializable {
 
 				map.put(t.getView(), loader.getController());
 				TitledPane pane = new TitledPane(t.getTitle(), node);
+				
+				pane.setOnMouseClicked(e -> {
+					
+				});
+				
 				tools.getPanes().add(pane);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -155,12 +160,7 @@ public class MainViewController extends Controller implements Initializable {
 			animateDataNode(d);
 		}
 
-		session.getScene().addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				session.setLastPacket(System.currentTimeMillis());
-			}
-		});
+		generateTooltip();
 	}
 
 	private void toggleLegends() {
@@ -172,21 +172,8 @@ public class MainViewController extends Controller implements Initializable {
 
 	private void animateDataNode(Data d) {
 		Node node = d.getNode();
-
-		node.setOnMouseEntered(e -> {
-			ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), node);
-			scaleTransition.setToX(1.05f);
-			scaleTransition.setToY(1.05f);
-			scaleTransition.play();
-
-		});
-
-		node.setOnMouseExited(e -> {
-			ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(100), node);
-			scaleTransition.setToX(1f);
-			scaleTransition.setToY(1f);
-			scaleTransition.play();
-		});
+		String percent = String.format("%.2f", d.getPieValue() * 100);
+		processTip(node, d.getName() + ": " + percent + "%");
 	}
 
 	public void hotkeyCheck(Event e) throws IOException {
