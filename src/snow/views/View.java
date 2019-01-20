@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import snow.views.login.LoginViewController;
 import snow.views.main.MainViewController;
+import snow.views.main.subviews.PieViewController;
 import snow.views.main.transaction.TransactionViewController;
 import snow.views.toolbar.ToolbarViewController;
 
@@ -14,6 +15,7 @@ public enum View {
 	MAIN("Main", "Home Page", MainViewController.class, false, false),
 	LOGIN("Login", "Login", LoginViewController.class, false, false),
 	TOOLBAR("Toolbar", "Toolbar", ToolbarViewController.class, false, false),
+	PIE_CONTAINER("PieContainer", null, PieViewController.class, false, true),
 	ACTIVITY_CHART("ActivityTable", null, TransactionViewController.class, false, true),
 	TRANSACTION_TABLE("TransactionTable", null, TransactionViewController.class, false, true);
 	

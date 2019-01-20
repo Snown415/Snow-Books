@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -15,36 +16,11 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.transaction.TransactionViewController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="860.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.transaction.TransactionViewController">
    <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="826.0">
-         <right>
-            <VBox alignment="TOP_CENTER" prefHeight="346.0" prefWidth="131.0" spacing="2.5" BorderPane.alignment="CENTER">
-               <children>
-                  <ComboBox fx:id="newType" prefWidth="150.0" promptText="Type" />
-                  <ComboBox fx:id="currencyType" prefHeight="27.0" prefWidth="120.0" promptText="Currency" />
-                  <ComboBox fx:id="budgetSelection" disable="true" prefWidth="150.0" promptText="Budget" />
-                  <DatePicker fx:id="newDate" promptText="Date" />
-                  <TextField fx:id="transactionId" promptText="Transaction Id" />
-                  <TextField fx:id="newRecipient" promptText="Recipient" />
-                  <TextField fx:id="email" promptText="Email" />
-                  <TextField fx:id="phone" promptText="Phone #" />
-                  <TextField fx:id="newAmount" promptText="Amount" />
-                  <Spinner fx:id="newSaving" editable="true">
-                     <tooltip>
-                        <Tooltip fx:id="savingTip" text="Empty Tooltip" />
-                     </tooltip>
-                  </Spinner>
-                  <Button fx:id="submit" mnemonicParsing="false" onAction="#onSubmit" prefHeight="27.0" prefWidth="169.0" text="Add Transaction" />
-               </children>
-               <padding>
-                  <Insets bottom="2.0" left="5.0" right="5.0" top="2.0" />
-               </padding>
-            </VBox>
-         </right>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="870.0">
          <center>
-            <TableView fx:id="activityTable" prefHeight="250.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="activityTable" prefHeight="225.0" prefWidth="482.0" BorderPane.alignment="CENTER">
                <columns>
                   <TableColumn fx:id="type" prefWidth="75.0" text="Type" />
                   <TableColumn fx:id="name" prefWidth="75.0" text="Name" />
@@ -69,6 +45,34 @@
                </contextMenu>
             </TableView>
          </center>
+         <right>
+            <ScrollPane hbarPolicy="NEVER" prefHeight="225.0" prefWidth="179.0" BorderPane.alignment="CENTER">
+               <content>
+                  <VBox alignment="TOP_CENTER" prefHeight="331.0" prefWidth="165.0" spacing="5.0">
+                     <children>
+                        <ComboBox fx:id="newType" prefWidth="150.0" promptText="Type" />
+                        <ComboBox fx:id="currencyType" prefHeight="27.0" prefWidth="120.0" promptText="Currency" />
+                        <ComboBox fx:id="budgetSelection" disable="true" prefWidth="150.0" promptText="Budget" />
+                        <DatePicker fx:id="newDate" promptText="Date" />
+                        <TextField fx:id="transactionId" promptText="Transaction Id" />
+                        <TextField fx:id="newRecipient" promptText="Recipient" />
+                        <TextField fx:id="email" promptText="Email" />
+                        <TextField fx:id="phone" promptText="Phone #" />
+                        <TextField fx:id="newAmount" promptText="Amount" />
+                        <Spinner fx:id="newSaving" editable="true">
+                           <tooltip>
+                              <Tooltip fx:id="savingTip" text="Empty Tooltip" />
+                           </tooltip>
+                        </Spinner>
+                        <Button fx:id="submit" mnemonicParsing="false" onAction="#onSubmit" prefHeight="27.0" prefWidth="169.0" text="Add Transaction" />
+                     </children>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </right>
       </BorderPane>
       <AnchorPane fx:id="glassPane" prefHeight="200.0" prefWidth="200.0" />
    </children>

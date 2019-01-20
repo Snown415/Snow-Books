@@ -6,23 +6,31 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="358.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.transaction.TransactionViewController">
-   <center>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <children>
-            <LineChart id="chart-box" fx:id="activityChart" alternativeRowFillVisible="false" layoutX="66.0" legendSide="RIGHT" legendVisible="false" prefHeight="358.0" prefWidth="694.0" stylesheets="@../../styles/ActivityChart.css" title="Annual Performance" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <xAxis>
-                  <CategoryAxis fx:id="chartCategories" autoRanging="false" endMargin="0.0" prefWidth="963.0" tickLabelGap="20.0">
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding></CategoryAxis>
-               </xAxis>
-               <yAxis>
-                  <NumberAxis prefHeight="0.0" prefWidth="28.0" side="LEFT" />
-               </yAxis>
-            </LineChart>
-         </children>
-      </AnchorPane>
-   </center>
-</BorderPane>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="860.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.transaction.TransactionViewController">
+   <children>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="225.0" prefWidth="860.0">
+         <center>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <LineChart id="chart-box" fx:id="activityChart" alternativeRowFillVisible="false" layoutX="66.0" legendSide="RIGHT" legendVisible="false" prefHeight="225.0" prefWidth="860.0" stylesheets="@../../styles/ActivityChart.css" title="Annual Performance" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <xAxis>
+                        <CategoryAxis fx:id="chartCategories" autoRanging="false" endMargin="0.0" prefWidth="963.0" tickLabelGap="20.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </CategoryAxis>
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis prefHeight="0.0" prefWidth="28.0" side="LEFT" />
+                     </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
+         </center>
+      </BorderPane>
+      <AnchorPane fx:id="glassPane" prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</StackPane>

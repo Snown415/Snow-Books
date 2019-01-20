@@ -9,6 +9,7 @@ import lombok.Setter;
 import snow.session.Session;
 import snow.session.packet.PacketType;
 import snow.transaction.Transaction;
+import snow.transaction.TransactionType;
 
 /**
  * Contains the Main method for launching the application;
@@ -26,6 +27,7 @@ public class Client extends Application {
 	public static void main(String[] args) {
 		setSession(new Session(null));
 		PacketType.init();
+		TransactionType.init();
 		launch(args);
 	}
 

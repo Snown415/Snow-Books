@@ -13,20 +13,18 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
 import lombok.Setter;
-import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketDecoder;
 import snow.session.packet.PacketEncoder;
 import snow.session.packet.PacketType;
 import snow.session.packet.impl.LogoutPacket;
-import snow.session.packet.impl.TransactionPacket;
-import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 import snow.user.User;
 import snow.views.Controller;
 import snow.views.View;
@@ -52,10 +50,10 @@ public class Session {
 	private @Getter @Setter Scene scene;
 	private @Getter Controller controller;
 	private @Getter LinkedHashMap<View, Controller> subviews = new LinkedHashMap<>();
-	
+
 	private @Getter @Setter long lastPacket;
 	private @Getter @Setter boolean timedOut;
-	
+
 	// Tooltip
 	protected @Getter @Setter HBox hover;
 	protected @Getter @Setter Label hoverText;
@@ -86,11 +84,11 @@ public class Session {
 	public Stage secondStage;
 
 	public void addView(View view) {
-		
+
 		if (secondStage != null) {
 			secondStage.close();
 		}
-		
+
 		secondStage = new Stage();
 		Controller controller = ViewManager.getController(view);
 		FXMLLoader loader = new FXMLLoader(controller.getClass().getResource(view.getFxml()));
@@ -106,9 +104,9 @@ public class Session {
 		secondStage.setResizable(view.isResizeable());
 		secondStage.show();
 	}
-	
+
 	private ScheduledExecutorService userService = Executors.newScheduledThreadPool(1);
-	
+
 	private Task<Void> userTask = new Task<Void>() {
 
 		@Override
@@ -119,19 +117,19 @@ public class Session {
 			}
 			return null;
 		}
-		
+
 	};
 
 	public void startSession() {
-		
+
 		userService.scheduleAtFixedRate(userTask, 30, 30, TimeUnit.SECONDS);
-		
+
 		userTask.setOnCancelled(e -> {
 			userService.shutdownNow();
 			Packet packet = new LogoutPacket(PacketType.LOGOUT);
 			encoder.sendPacket(true, packet);
 		});
-		
+
 	}
 
 	public void setView() {
@@ -154,38 +152,55 @@ public class Session {
 		}
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Node addSubview(Node node, View subview) {
-		
+
 		if (!subview.isSubview()) {
 			System.err.println("This view isn't a subview; " + subview.name());
 			return null;
 		}
 		
-		if (node instanceof ListView) {
-			ListView<Node> pane = (ListView<Node>) node;
-			Node view;
+		FXMLLoader loader = new FXMLLoader();
+		Node view = null;
+
+		try {
 			
-			try {
-				view = FXMLLoader.load(subview.getResource());
+			if (node instanceof ListView) {
+				ListView<Node> pane = (ListView<Node>) node;
+				loader.setLocation(subview.getResource());
+				view = loader.load();
 				StackPane layout = new StackPane();
 				layout.setAlignment(Pos.CENTER);
 				layout.getChildren().add(view);
 				pane.getItems().add(layout);
+			} else if (node instanceof HBox) {
+				HBox pane = (HBox) node;
+				loader.setLocation(subview.getResource());
+				view = loader.load();
+				pane.getChildren().add(view);
+				
+				if (subview == View.PIE_CONTAINER) {
+					return ((AnchorPane) view).getChildren().get(0); // return piechart
+				}
+			}
+			
+			if (view != null) {
+				subviews.put(subview, loader.getController());
 				return view;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}		
-		} 
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		return null;
+		return null;	
 	}
-	
+
 	public void finish() {
 		userTask.cancel();
 		userService.shutdownNow();
-		
+
 		if (secondStage != null) {
 			secondStage.close();
 			secondStage = null;

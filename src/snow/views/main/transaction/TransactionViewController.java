@@ -24,6 +24,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -43,12 +45,14 @@ import snow.Client;
 import snow.session.packet.impl.TransactionPacket;
 import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 import snow.transaction.Transaction;
+import snow.transaction.TransactionType;
 import snow.views.Controller;
 
 public class TransactionViewController extends Controller implements Initializable {
 
 	private @FXML Button submit;
-	private @FXML ComboBox<String> newType, currencyType, budgetSelection;
+	private @FXML ComboBox<TransactionType> newType;
+	private @FXML ComboBox<String> currencyType, budgetSelection;
 	private @FXML DatePicker newDate;
 	private @FXML TextField transactionId, newRecipient, email, phone, newAmount;
 	private @FXML Spinner<Double> newSaving;
@@ -68,13 +72,11 @@ public class TransactionViewController extends Controller implements Initializab
 			"amount", "saving%", "saving" };
 	private LinkedHashMap<String, Object> currentValues = new LinkedHashMap<>();
 
-	private ObservableList<String> types = FXCollections.observableArrayList("Service", "Contract", "Business Expense",
-			"Personal Expense", "Savings");
+	private ObservableList<TransactionType> types = FXCollections.observableArrayList(TransactionType.values());
 	private ObservableList<String> currencies = FXCollections.observableArrayList("USD", "EUR");
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
 	}
 
 	public void initTooltip() {
@@ -83,13 +85,34 @@ public class TransactionViewController extends Controller implements Initializab
 	}
 
 	public void handleTable() {
+		glassPane.setPickOnBounds(false);
 		newType.setItems(types);
+		
+		newType.setCellFactory(new Callback<ListView<TransactionType>, ListCell<TransactionType>>() {
+
+			@Override
+			public ListCell<TransactionType> call(ListView<TransactionType> param) {
+				final ListCell<TransactionType> cell = new ListCell<TransactionType>() {
+					@Override
+					protected void updateItem(TransactionType item, boolean empty) {
+						super.updateItem(item, empty);
+						if (empty || item == null) {
+							setText(null);
+						} else {
+							setText(item.getName());
+						}
+					}
+				};
+				return cell;
+			}
+			
+		});
 
 		newType.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
 			if (nv == null)
 				return;
 
-			if (nv.equals("Savings")) {
+			if (nv.equals(TransactionType.SAVINGS)) {
 				newSaving.getValueFactory().setValue(100.0);
 				newSaving.setDisable(true);
 				newRecipient.setDisable(true);
@@ -117,6 +140,7 @@ public class TransactionViewController extends Controller implements Initializab
 	}
 
 	public void handleChart() {
+		initTooltip();
 		activityChart.setCreateSymbols(false);
 		chartCategories.setCategories(categories);
 		plotInitialData();
@@ -274,7 +298,7 @@ public class TransactionViewController extends Controller implements Initializab
 
 	private void refreshValues() {
 		currentValues.clear();
-		currentValues.put(valueKeys[0], newType.getSelectionModel().getSelectedItem());
+		currentValues.put(valueKeys[0], newType.getSelectionModel().getSelectedItem().getName());
 		currentValues.put(valueKeys[1], currencyType.getSelectionModel().getSelectedItem());
 		currentValues.put(valueKeys[2], budgetSelection.getSelectionModel().getSelectedItem());
 		currentValues.put(valueKeys[3], newDate.getValue());
