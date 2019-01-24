@@ -7,7 +7,7 @@ public class Config {
 	public static final boolean LIVE = false; // Run the client to connect with outside connections
 	public static final boolean LOCAL = true; // Run the client to connect with localhost
 	
-	public static final String HOST = LIVE ? "184.91.35.220" : LOCAL ? "127.0.0.1" : "192.168.1.25"; // The server host
+	public static final String HOST = LIVE ? "" : LOCAL ? "127.0.0.1" : ""; // The server host
 	
 
 }
