@@ -11,11 +11,12 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="870.0" xmlns="http://javafx.com/javafx/8.0.192" xmlns:fx="http://javafx.com/fxml/1" fx:controller="snow.views.main.MainViewController">
    <children>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#hotkeyCheck" prefHeight="620.0" prefWidth="870.0" stylesheets="@../styles/ChartView.css">
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="870.0" stylesheets="@../styles/ChartView.css">
          <top>
             <AnchorPane prefHeight="56.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                <children>
@@ -23,7 +24,7 @@
                      <items>
                         <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="287.0" spacing="10.0">
                            <children>
-                              <Label prefHeight="33.0" prefWidth="288.0" text="Welcome, Username!">
+                              <Label fx:id="welcome" prefHeight="33.0" prefWidth="288.0" text="Welcome, Username!">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
@@ -32,7 +33,7 @@
                         </HBox>
                         <ButtonBar buttonOrder="" prefHeight="42.0" prefWidth="554.0">
                            <buttons>
-                              <Button mnemonicParsing="false" text="Home" />
+                              <Button mnemonicParsing="false" onAction="#onAddBudget" text="Add Budget" />
                               <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" text="Profile" />
                               <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" text="About" />
                               <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" onAction="#onLogout" text="Log out" textFill="#8a0000" />
@@ -56,11 +57,20 @@
          <center>
             <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <ScrollPane pannable="true" prefHeight="282.0" prefWidth="871.0" vbarPolicy="NEVER">
-                     <content>
-                        <HBox fx:id="subviewContainer" prefHeight="260.0" prefWidth="870.0" />
-                     </content>
-                  </ScrollPane>
+                  <VBox prefHeight="284.0" prefWidth="870.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label alignment="TOP_CENTER" prefHeight="44.0" prefWidth="870.0" text="Budgets" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <ScrollPane pannable="true" prefHeight="282.0" prefWidth="871.0" vbarPolicy="NEVER">
+                           <content>
+                              <HBox fx:id="subviewContainer" prefHeight="260.0" prefWidth="870.0" />
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </VBox>
                </children>
             </AnchorPane>
          </center>
