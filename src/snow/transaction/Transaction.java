@@ -14,7 +14,7 @@ public class Transaction implements Serializable {
 	
 	private @Getter @Setter String type, currencyType, budget, name, recipient, email, phone;
 	private @Getter @Setter LocalDate date;
-	private @Getter @Setter double amount, savingPercent, savingAmount, profit;
+	private @Getter @Setter Double amount, savingPercent, savingAmount, profit;
 	private @Getter @Setter String month;
 	private @Getter @Setter int day;
 
@@ -27,13 +27,24 @@ public class Transaction implements Serializable {
 		setRecipient((String) recipient);
 		setEmail((String) email);
 		setPhone((String) phone);
-		setAmount(amount == null ? 0 : formatDouble((double) amount));
+		setAmount(determineAmount((Double)amount));
 		setSavingPercent(savingPercent == null ? 0 : formatDouble((double) savingPercent));
 		setSavingAmount(formatDouble(determineSavingAmount()));
 		setProfit(formatDouble(getAmount() - getSavingAmount()));
 		
 		setMonth(((LocalDate) date).getMonth().toString());
 		setDay(((LocalDate) date).getDayOfMonth());
+	}
+	
+	private Double determineAmount(Double amount) {
+		if (amount == null || type == null)
+			return 0.0;
+
+		if (type.contains("Expense"))
+			return amount *= -1;
+		else
+			return amount;
+		
 	}
 	
 	private Double formatDouble(double value) {

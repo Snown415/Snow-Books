@@ -1,93 +1,139 @@
 package snow.views.main.transaction;
 
-import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ResourceBundle;
+
+import org.apache.commons.lang3.StringUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import lombok.Getter;
 import snow.Client;
+import snow.session.packet.PacketProcessor;
 import snow.session.packet.impl.TransactionPacket;
-import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
+import snow.transaction.Budget;
 import snow.transaction.Transaction;
 import snow.transaction.TransactionType;
 import snow.views.Controller;
+import snow.views.View;
+import snow.views.main.MainViewController;
 
-public class TransactionViewController extends Controller implements Initializable {
+public class TransactionTableController extends Controller implements Initializable {
 
 	private @FXML Button submit;
 	private @FXML ComboBox<TransactionType> newType;
-	private @FXML ComboBox<String> currencyType, budgetSelection;
+	private @FXML ComboBox<String> budgetSelection, currencyType;
 	private @FXML DatePicker newDate;
-	private @FXML TextField transactionId, newRecipient, email, phone, newAmount;
-	private @FXML Spinner<Double> newSaving;
+	private @FXML TextField transactionId, newRecipient, email, phone, newAmount, newSaving;
 	private @FXML Tooltip savingTip;
 	private @Getter @FXML AnchorPane glassPane;
 
 	private @FXML TableView<Transaction> activityTable;
-	private @FXML TableColumn<Transaction, Object> type, name, amount, recipient, saving, savingAmount, profit, date,
+	private @FXML TableColumn<Transaction, Object> type, budget, name, amount, recipient, saving, savingAmount, profit, date,
 			date_Month, date_Day;
 
-	private @FXML LineChart<String, Double> activityChart;
-	private @FXML CategoryAxis chartCategories;
-	private String[] months = new DateFormatSymbols().getShortMonths();
-	private ObservableList<String> categories = FXCollections.observableArrayList(months);
-
+	
 	private String[] valueKeys = { "type", "currencytype", "budget", "date", "id", "recipient", "email", "phone",
 			"amount", "saving%", "saving" };
 	private LinkedHashMap<String, Object> currentValues = new LinkedHashMap<>();
 
 	private ObservableList<TransactionType> types = FXCollections.observableArrayList(TransactionType.values());
 	private ObservableList<String> currencies = FXCollections.observableArrayList("USD", "EUR");
+	
+	private Transaction removedTransaction;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	}
+		glassPane.setPickOnBounds(false);
+		newType.setItems(types);
+		budgetSelection.getItems().add("None");
 
-	public void initTooltip() {
+		if (Client.getBudgets().size() > 0) {
+			
+			populateBudgets.setOnSucceeded(e -> {
+				System.out.println("Finished added budgets.");
+			});
+			
+			populateBudgets.setOnFailed(e -> {
+				System.err.println("Failed to add budgets.");
+			});
+			
+			new Thread(populateBudgets).start();
+		}
+
+		handleTypeSelection();
+		handleComboBoxes();
+
+		newDate.setValue(LocalDate.now());
+		savingTip.setAutoHide(false);
+		savingTip.setOnShowing(e -> {
+			savingTip.setText("Saving: " + calculateSavings());
+		});
+
+		handleTableFactories();
+		refreshValues();
+		activityTable.getItems().setAll(Client.getTransactions().values());
+		
 		setGlassPane(glassPane);
 		generateTooltip();
 	}
 
-	public void handleTable() {
-		glassPane.setPickOnBounds(false);
-		newType.setItems(types);
+	public void validateNumeric(Event e) {
+		KeyEvent keyevent = (KeyEvent) e;
+
+		if (!StringUtils.isNumeric(keyevent.getCharacter())) {
+			e.consume();
+		}
+	}
+
+	public void addBudget(String budget) {
+		budgetSelection.getItems().add(budget);
+	}
+	
+	private Task<Void> populateBudgets = new Task<Void>() {
+
+		@Override
+		protected Void call() throws Exception {
+			for (String b : Client.getBudgets().keySet()) {
+				budgetSelection.getItems().add(b);
+			}
+			return null;
+		}
 		
+	};
+	
+	private void handleComboBoxes() {
+		currencyType.setItems(currencies);
+		newType.getSelectionModel().select(0);
+		budgetSelection.getSelectionModel().select(0);
+		currencyType.getSelectionModel().select(0);
+	}
+
+	private void handleTypeSelection() {
 		newType.setCellFactory(new Callback<ListView<TransactionType>, ListCell<TransactionType>>() {
 
 			@Override
@@ -105,7 +151,7 @@ public class TransactionViewController extends Controller implements Initializab
 				};
 				return cell;
 			}
-			
+
 		});
 
 		newType.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
@@ -113,37 +159,45 @@ public class TransactionViewController extends Controller implements Initializab
 				return;
 
 			if (nv.equals(TransactionType.SAVINGS)) {
-				newSaving.getValueFactory().setValue(100.0);
+				newSaving.setText(String.valueOf(100));
 				newSaving.setDisable(true);
 				newRecipient.setDisable(true);
+			} else if (nv.equals(TransactionType.BUSINESS_EXPENSE) || nv.equals(TransactionType.PERSONAL_EXPENSE)) {
+				if (budgetSelection.getSelectionModel().getSelectedItem() != null) {
+					newSaving.setText(String.valueOf(0));
+					newSaving.setDisable(true);
+					newRecipient.setDisable(true);
+				}
+
 			} else {
-				if (newSaving.isDisable())
+				if (newSaving.isDisable()) {
 					newRecipient.setDisable(false);
-				newSaving.setDisable(false);
+					newSaving.setDisable(false);
+				}
 			}
 		});
 
-		currencyType.setItems(currencies);
-		newType.getSelectionModel().select(0);
-		currencyType.getSelectionModel().select(0);
-		newSaving.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0, 100, 25));
+		budgetSelection.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+			if (nv == null)
+				return;
 
-		newDate.setValue(LocalDate.now());
-		savingTip.setAutoHide(false);
-		savingTip.setOnShowing(e -> {
-			savingTip.setText("Saving: " + calculateSavings());
+			TransactionType type = newType.getSelectionModel().getSelectedItem();
+
+			if (type == null)
+				return;
+
+			if (type == TransactionType.BUSINESS_EXPENSE || type == TransactionType.PERSONAL_EXPENSE) {
+				newSaving.setText(String.valueOf(0));
+				newSaving.setDisable(true);
+				newRecipient.setDisable(true);
+			} else {
+				if (newSaving.isDisable()) {
+					newRecipient.setDisable(false);
+					newSaving.setDisable(false);
+				}
+			}
 		});
 
-		handleTableFactories();
-		refreshValues();
-		activityTable.getItems().setAll(Client.getTransactions().values());
-	}
-
-	public void handleChart() {
-		initTooltip();
-		activityChart.setCreateSymbols(false);
-		chartCategories.setCategories(categories);
-		plotInitialData();
 	}
 
 	public void onSubmit() {
@@ -151,28 +205,18 @@ public class TransactionViewController extends Controller implements Initializab
 		int length = currentValues.size();
 		Object[] array = new Object[length];
 		int count = 0;
+		
+		if (transactionId.getText() == null || transactionId.getText().isEmpty()) {
+			System.err.println("Invalid transaction Id"); // TODO add error reporting
+			return;
+		}
 
 		for (String key : currentValues.keySet()) {
 			array[count] = currentValues.get(key);
 			count++;
 		}
 
-		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.ADD_TRANSACTION, true, array));
-	}
-
-	public void hotkeyCheck(Event e) throws IOException {
-		KeyEvent event = (KeyEvent) e;
-
-		KeyCode code = event.getCode();
-
-		if (code == KeyCode.DELETE) {
-			System.out.println("Removing all data");
-			session.getEncoder().sendPacket(true,
-					new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, "REMOVEALLDATA"));
-			activityTable.getItems().clear();
-			Client.getTransactions().clear();
-		}
-
+		session.getEncoder().sendPacket(true, new TransactionPacket(PacketProcessor.ADD, true, array));
 	}
 
 	public void addTransaction() {
@@ -182,8 +226,48 @@ public class TransactionViewController extends Controller implements Initializab
 		Transaction t = new Transaction(map.get("type"), map.get("currencyType"), map.get("budget"), map.get("date"),
 				map.get("id"), map.get("recipient"), map.get("email"), map.get("phone"), map.get("amount"),
 				map.get("saving%"));
+		
+		Client.getTransactions().put(t.getName(), t);
+
+		if (t.getBudget() != null && !t.getBudget().equals("None") && Client.getBudgets().containsKey(t.getBudget())) {
+			Budget b = Client.getBudgets().get(t.getBudget());
+			b.validate();
+
+			if (t.getType().contains("Expense"))
+				b.addDeduction(t);
+			else
+				b.addTransaction(t);
+
+			MainViewController controller = (MainViewController) session.getController();
+			controller.rebuildBudget(b);
+		}
 
 		activityTable.getItems().add(t);
+		
+		TransactionChartController chart = (TransactionChartController) session.getSubviews().get(View.ACTIVITY_CHART);
+		chart.refreshChart();
+	}
+	
+	public void removeTranscation() {
+		if (removedTransaction == null)
+			return;
+		
+		MainViewController controller = (MainViewController) session.getController();
+		
+		activityTable.getItems().remove(removedTransaction);
+		String budget = removedTransaction.getBudget();
+		
+		if (budget != null && !budget.equals("None")) {
+			Budget b = Client.getBudgets().get(budget);
+			b.removeTransaction(removedTransaction);
+			controller.rebuildBudget(b);
+		}
+		
+		Client.getTransactions().remove(removedTransaction.getName());
+		removedTransaction = null;
+		
+		TransactionChartController chart = (TransactionChartController) session.getSubviews().get(View.ACTIVITY_CHART);
+		chart.refreshChart();
 	}
 
 	public void addTransaction(Transaction t) {
@@ -192,6 +276,7 @@ public class TransactionViewController extends Controller implements Initializab
 
 	private void handleTableFactories() {
 		type.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("type"));
+		budget.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("budget"));
 		name.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("name"));
 		amount.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("amount"));
 		recipient.setCellValueFactory(new PropertyValueFactory<Transaction, Object>("recipient"));
@@ -209,9 +294,9 @@ public class TransactionViewController extends Controller implements Initializab
 
 		items[1].setOnAction(e -> {
 			Transaction selection = activityTable.getSelectionModel().getSelectedItem();
-			activityTable.getItems().remove(selection);
+			removedTransaction = selection;
 			session.getEncoder().sendPacket(true,
-					new TransactionPacket(TransactionProcesser.REMOVE_TRANSACTION, true, selection.getName()));
+					new TransactionPacket(PacketProcessor.REMOVE, true, selection.getName()));
 		});
 
 		ContextMenu menu = new ContextMenu(items);
@@ -243,58 +328,7 @@ public class TransactionViewController extends Controller implements Initializab
 
 	}
 
-	private void plotInitialData() {
-		XYChart.Series<String, Double> series = new XYChart.Series<>();
-		XYChart.Data<String, Double> data;
-
-		LinkedHashMap<String, Double> monthlyData = new LinkedHashMap<>();
-		LinkedHashMap<String, List<String>> transactionData = new LinkedHashMap<>();
-
-		// Generate Map TODO store map in InitialData
-		for (Transaction t : Client.getTransactions().values()) {
-			String month = months[t.getDate().getMonthValue() - 1];
-			double amount = formatDouble(t.getAmount());
-
-			if (transactionData.containsKey(month)) {
-				List<String> value = transactionData.get(month);
-
-				value.add("$" + amount + " on " + t.getDate().toString());
-			} else {
-				LinkedList<String> list = new LinkedList<>();
-				list.add("$" + amount + " on " + t.getDate().toString());
-				transactionData.put(month, list);
-			}
-
-			if (monthlyData.containsKey(month)) {
-				Double value = monthlyData.get(month);
-				monthlyData.put(month, value + amount);
-			} else
-				monthlyData.put(month, amount);
-		}
-
-		// Use Map to plot points
-		for (String key : monthlyData.keySet()) {
-			data = new XYChart.Data<>(key, monthlyData.get(key));
-
-			StringBuilder sb = new StringBuilder();
-			for (String s : transactionData.get(key)) {
-				sb.append(s + "\n");
-			}
-			VBox v = new VBox();
-
-			Label value = new Label(String.valueOf(monthlyData.get(key)));
-			value.setStyle("-fx-font-size:12");
-			v.getChildren().add(value);
-
-			processTip(v, sb.toString(), 1.5);
-
-			data.setNode(v);
-
-			series.getData().add(data);
-		}
-
-		activityChart.getData().add(series);
-	}
+	
 
 	private void refreshValues() {
 		currentValues.clear();
@@ -307,13 +341,14 @@ public class TransactionViewController extends Controller implements Initializab
 		currentValues.put(valueKeys[6], email.getText());
 		currentValues.put(valueKeys[7], phone.getText());
 		currentValues.put(valueKeys[8], formatDouble(newAmount.getText()));
-		currentValues.put(valueKeys[9], formatDouble(newSaving.getValue()));
+		currentValues.put(valueKeys[9], formatDouble(newSaving.getText()));
 		currentValues.put(valueKeys[10], calculateSavings());
 	}
 
 	private double calculateSavings() {
 		double amount = newAmount.getText().isEmpty() ? 0 : Double.parseDouble(newAmount.getText());
-		double value = amount * (newSaving.getValue() / 100);
+		double saving = newSaving.getText().isEmpty() ? 0 : Double.parseDouble(newSaving.getText());
+		double value = amount * (saving / 100);
 		double formattedValue = formatDouble(value);
 		return formattedValue;
 	}

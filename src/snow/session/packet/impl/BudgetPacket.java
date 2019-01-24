@@ -11,16 +11,15 @@ import snow.Client;
 import snow.session.packet.Packet;
 import snow.session.packet.PacketProcessor;
 import snow.session.packet.PacketType;
-import snow.transaction.Transaction;
-import snow.views.View;
-import snow.views.main.transaction.TransactionTableController;
+import snow.transaction.Budget;
+import snow.views.main.MainViewController;
 
-public class TransactionPacket extends Packet {
+public class BudgetPacket extends Packet {
 
 	private @Getter @Setter PacketProcessor processor;
 
-	public TransactionPacket(PacketProcessor processor, boolean sending, Object... data) {
-		super(PacketType.TRANSACTION, data);
+	public BudgetPacket(PacketProcessor processor, boolean sending, Object... data) {
+		super(PacketType.BUDGET, data);
 		setProcessor(processor);
 
 		if (sending) {
@@ -35,14 +34,13 @@ public class TransactionPacket extends Packet {
 
 	@Override
 	public void process() {
-		TransactionTableController controller;
+		MainViewController controller;
 
 		switch (processor) {
 		case ADD:
-
+			controller = (MainViewController) Client.getSession().getController();
 			if ((boolean) data[2]) {
-				controller = (TransactionTableController) Client.getSession().getSubviews().get(View.TRANSACTION_TABLE);
-				controller.addTransaction();
+				controller.addBudget();
 			} else {
 				System.out.println(data[3].toString());
 			}
@@ -55,36 +53,35 @@ public class TransactionPacket extends Packet {
 			String id = data[3].toString();
 
 			if (id.equals("REMOVEALLDATA")) {
-				Client.getTransactions().clear();
+				Client.getBudgets().clear();
 				break;
 			}
-			
-			controller = (TransactionTableController) Client.getSession().getSubviews().get(View.TRANSACTION_TABLE);
-			controller.removeTranscation();
+
+			System.out.println("Removing " + id);
+			Client.getBudgets().remove(id);
 			break;
 		case REQUEST:
 
 			if ((boolean) data[2]) {
-				new Thread(populateTransactions).start();
+				new Thread(populateBudgets).start();
 			}
-
 			break;
+			
 		default:
 			break;
 		}
-
 	}
 
-	private Task<Void> populateTransactions = new Task<Void>() {
+	private Task<Void> populateBudgets = new Task<Void>() {
 
 		@Override
 		protected Void call() throws Exception {
-			Client.getTransactions().clear();
-			Object[] transactions = (Object[]) data[3];
+			Client.getBudgets().clear();
+			Object[] budgets = (Object[]) data[3];
 
-			for (Object o : transactions) {
-				Transaction t = (Transaction) o;
-				Client.getTransactions().put(t.getName(), t);
+			for (Object o : budgets) {
+				Budget b = (Budget) o;
+				Client.getBudgets().put(b.getName(), b);
 			}
 
 			return null;

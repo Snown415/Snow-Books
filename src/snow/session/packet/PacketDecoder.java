@@ -3,11 +3,11 @@ package snow.session.packet;
 import lombok.Getter;
 import lombok.Setter;
 import snow.session.Session;
+import snow.session.packet.impl.BudgetPacket;
 import snow.session.packet.impl.LoginPacket;
 import snow.session.packet.impl.LogoutPacket;
 import snow.session.packet.impl.RegistrationPacket;
 import snow.session.packet.impl.TransactionPacket;
-import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 
 public class PacketDecoder {
 	
@@ -49,11 +49,16 @@ public class PacketDecoder {
 			
 		case TRANSACTION:
 			int ordinal = (int) data[1];
-			new TransactionPacket(TransactionProcesser.values()[ordinal], false, data).process();
+			new TransactionPacket(PacketProcessor.values()[ordinal], false, data).process();
+			break;
+			
+		case BUDGET:
+			ordinal = (int) data[1];
+			new BudgetPacket(PacketProcessor.values()[ordinal], false, data).process();
 			break;
 			
 		default:
-			System.err.println("Invalid packet! ID: " + action);
+			System.err.println("Unhandled Packet! ID: " + action);
 			break;
 			
 		}
