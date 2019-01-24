@@ -3,6 +3,8 @@ A JavaFX client built to utilize a MVC (Model View Controller) architecture.
 
 Snow Books is a mock business application for personal use. It started out as a very simple chart and table of information to keep track of my person finances as a sole proprietor. I then built a structured JavaFX application and merged the two into one application. Once the merge was complete, I built out a server to handle all of the data using serialization and at one point, MySQL. I removed the SQL to work more dynamically, serialization allows me to work from two different machines where as SQL forced me to run the server on my desktop where the databases were stored. 
 
+###### Note: This application connections to a server, cloning the repository and trying to run the application won't work as expected. If you're an employer, recruiter, hiring manager, ect please contact me at Snown415@icloud.com.
+
 ### Key Features:
 - Transactions: The ability to create, remove, and edit transactions with different types such as income types (services, contract, ect..) and expenses like business expenses and personal expenses. The plan is to expand transactions so users can easily add their own transaction types.
 
