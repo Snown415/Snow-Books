@@ -15,9 +15,12 @@ public class Preferences implements Serializable {
 	private @Getter @Setter String username;
 	private @Getter @Setter String password;
 	
+	private @Getter @Setter int timeout;
+	
 	public Preferences() {
 		setRememberUsername(false);
 		setAutoLogin(false);
+		setTimeout(5);
 	}
 	
 	public Preferences(boolean remember, boolean auto, String u, String p) {
@@ -25,6 +28,7 @@ public class Preferences implements Serializable {
 		setAutoLogin(auto);
 		setUsername(u);
 		setPassword(p);
+		setTimeout(5);
 	}
 
 }

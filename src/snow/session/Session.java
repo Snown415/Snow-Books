@@ -6,16 +6,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javafx.concurrent.Task;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
@@ -105,31 +101,37 @@ public class Session {
 		secondStage.show();
 	}
 
-	private ScheduledExecutorService userService = Executors.newScheduledThreadPool(1);
+	private ScheduledExecutorService userService;
 
-	private Task<Void> userTask = new Task<Void>() {
+	private Runnable userTask = new Runnable() {
 
 		@Override
-		protected Void call() throws Exception {
-			if (System.currentTimeMillis() - lastPacket >= (5 * 60 * 1000)) {
-				setTimedOut(true);
-				cancel();
+		public void run() {
+			int minutes = prefs.getTimeout();
+			
+			if (System.currentTimeMillis() - lastPacket >= (minutes * 60 * 1000)) {
+				System.out.println("Timing out...");
+				Platform.runLater(timeoutTask);
 			}
-			return null;
 		}
-
 	};
+	
+	private Runnable timeoutTask = new Runnable() {
 
-	public void startSession() {
-
-		userService.scheduleAtFixedRate(userTask, 30, 30, TimeUnit.SECONDS);
-
-		userTask.setOnCancelled(e -> {
+		@Override
+		public void run() {
+			setTimedOut(true);
 			userService.shutdownNow();
 			Packet packet = new LogoutPacket(PacketType.LOGOUT);
 			encoder.sendPacket(true, packet);
-		});
+		}
+		
+	};
 
+	public void startSession() {
+		System.out.println("Starting session");
+		userService = Executors.newScheduledThreadPool(1);
+		userService.scheduleAtFixedRate(userTask, 0, 1, TimeUnit.SECONDS);
 	}
 
 	public void setView() {
@@ -142,6 +144,14 @@ public class Session {
 
 		try {
 			stage.setScene(new Scene(viewManager.getLoader().load()));
+			setScene(stage.getScene());
+
+			// Reset timeout timer
+			scene.addEventFilter(MouseEvent.MOUSE_PRESSED, e -> {
+				lastPacket = System.currentTimeMillis();
+				System.out.println("Clicked");
+			});
+
 			stage.setTitle(currentView.getTitle());
 			stage.setResizable(currentView.isResizeable());
 			stage.setOnCloseRequest(e -> finish());
@@ -153,52 +163,8 @@ public class Session {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public Node addSubview(Node node, View subview) {
-
-		if (!subview.isSubview()) {
-			System.err.println("This view isn't a subview; " + subview.name());
-			return null;
-		}
-		
-		FXMLLoader loader = new FXMLLoader();
-		Node view = null;
-
-		try {
-			
-			if (node instanceof ListView) {
-				ListView<Node> pane = (ListView<Node>) node;
-				loader.setLocation(subview.getResource());
-				view = loader.load();
-				StackPane layout = new StackPane();
-				layout.setAlignment(Pos.CENTER);
-				layout.getChildren().add(view);
-				pane.getItems().add(layout);
-			} else if (node instanceof HBox) {
-				HBox pane = (HBox) node;
-				loader.setLocation(subview.getResource());
-				view = loader.load();
-				pane.getChildren().add(view);
-				
-				if (subview == View.PIE_CONTAINER) {
-					return ((AnchorPane) view).getChildren().get(0); // return piechart
-				}
-			}
-			
-			if (view != null) {
-				subviews.put(subview, loader.getController());
-				return view;
-			}
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;	
-	}
-
 	public void finish() {
-		userTask.cancel();
+		System.out.println("Finished...");
 		userService.shutdownNow();
 
 		if (secondStage != null) {

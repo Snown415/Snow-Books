@@ -15,12 +15,16 @@ public class LogoutPacket extends Packet {
 
 	@Override
 	public void process() {
+		Client.getSession().finish();
 		Client.getSession().setController(View.LOGIN, true);
+		Client.getBudgets().clear();
+		Client.getTransactions().clear();
 		LoginViewController c = (LoginViewController) Client.getSession().getController();
 		
 		if (Client.getSession().isTimedOut()) {
 			c.getMessage().setTextFill(Paint.valueOf("red"));
 			c.setLoginMessage("You have timed out due to inactivity.");
+			Client.getSession().setTimedOut(false);
 		}
 	}
 

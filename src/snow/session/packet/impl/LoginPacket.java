@@ -3,8 +3,8 @@ package snow.session.packet.impl;
 import snow.Client;
 import snow.session.Session;
 import snow.session.packet.Packet;
+import snow.session.packet.PacketProcessor;
 import snow.session.packet.PacketType;
-import snow.session.packet.impl.TransactionPacket.TransactionProcesser;
 import snow.user.User;
 import snow.views.View;
 import snow.views.login.LoginViewController;
@@ -30,7 +30,8 @@ public class LoginPacket extends Packet {
 			return;
 		}
 		
-		session.getEncoder().sendPacket(true, new TransactionPacket(TransactionProcesser.REQUEST_TRANSACTIONS, true));
+		session.getEncoder().sendPacket(true, new TransactionPacket(PacketProcessor.REQUEST, true));
+		session.getEncoder().sendPacket(true, new BudgetPacket(PacketProcessor.REQUEST, true));
 		
 		String username = (String) getData()[2];
 		User user = new User(username);
