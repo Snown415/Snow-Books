@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 import snow.Client;
 import snow.session.Session;
+import snow.views.main.MainViewController;
 
 /**
  * Abstract class for controllers
@@ -50,9 +51,22 @@ public abstract class Controller {
 		hover.getChildren().add(hoverText);
 		hover.setPrefHeight(15);
 		hover.setPrefWidth(150);
+		
+		if (glassPane == null) {
+			System.err.println("Glasspane was invalid... Couldn't generate tooltip.");
+			return;
+		}
+		
 		glassPane.getChildren().clear();
 		glassPane.getChildren().add(hover);
 		glassPane.setPickOnBounds(false);
+	}
+	
+	private @Setter Double xpos = null, ypos = null;
+	
+	protected void setPosition(double x, double y) {
+		setXpos(x);
+		setYpos(y);
 	}
 	
 	protected void processTip(Node node, String value, double scaleto) {
@@ -74,12 +88,17 @@ public abstract class Controller {
 
 		node.setOnMouseMoved(e -> {
 			
-			if (e.getSceneX() > 400) 
-				hover.setLayoutX(e.getSceneX() - hover.getWidth() - 50);
-			 else
-				 hover.setLayoutX(e.getSceneX());
-			
-			hover.setLayoutY(e.getY());
+			if (this instanceof MainViewController) {
+				hover.setLayoutX(e.getSceneX() - (hover.getWidth() / 2));
+				hover.setLayoutY(e.getSceneY() - 50);
+			} else {
+				if (e.getSceneX() > 400) 
+					hover.setLayoutX(e.getSceneX() - hover.getWidth() - 50);
+				 else
+					 hover.setLayoutX(e.getSceneX());
+				
+				hover.setLayoutY(e.getY());
+			}
 		});
 
 		node.setOnMouseExited(e -> {
