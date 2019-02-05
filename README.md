@@ -1,9 +1,7 @@
 # Snow-Books
 A JavaFX client built to utilize a MVC (Model View Controller) architecture.
 
-Snow Books is a mock business application for personal use. It started out as a very simple chart and table of information to keep track of my person finances as a sole proprietor. I then built a structured JavaFX application and merged the two into one application. Once the merge was complete, I built out a server to handle all of the data using serialization and at one point, MySQL. I removed the SQL to work more dynamically, serialization allows me to work from two different machines where as SQL forced me to run the server on my desktop where the databases were stored. 
-
-###### Note: This application connections to a server, cloning the repository and trying to run the application won't work as expected. If you're an employer, recruiter, hiring manager, ect please contact me at Snown415@icloud.com.
+Snow Books is a mock business application for personal use. It started out as a very simple chart and table of information to keep track of my person finances as a sole proprietor. I then built a structured JavaFX application and merged the two into one application. Once the merge was complete, I built out a server to handle all of the data using serialization and at one point, MySQL. I removed the SQL to work more dynamically, serialization allows me to work from two different machines where as SQL forced me to run the server on my desktop where the databases were stored.
 
 ### Key Features:
 - Transactions: The ability to create, remove, and edit transactions with different types such as income types (services, contract, ect..) and expenses like business expenses and personal expenses. The plan is to expand transactions so users can easily add their own transaction types.
@@ -28,3 +26,8 @@ Here is a look at what v1 of Snow Books looked like...
 ![alt text](https://i.gyazo.com/15aa84024da2cc33de8af09b5d502702.png)
 
 This ugly, simple application was such an inspiration. My first job was doing something I love and although my free-lancing experience was short it tought me how to follow through and code to the best of my abiltities. I only had 2 clients but I can safely say that they were happy with what I provided. Free-lancing was worth the money but I knew it wasn't what I wanted. I aspired to be a part of a team and work with others to accomplish things that would take me a long time by myself; hence, my portfolio exists. Snow Books v2 came to life on Decemeber 19, 2018 and one month and a few days later it is fully functioning. I have a published app on Google Play, yet this application is the one I am most proud of. It speaks a thousand words about who I am and have far I have come. A young man with a dream to do amazing things using software, my journey has just began.
+
+### Usage
+If you're interested in using the application you will need both the server and client. I have extracted both projects into separate .jar files so you can run them easily. You can also clone the repositories and open the projects in Eclipse. The main functions can be found in Launcher.Java (server) and Client.java (client).
+You can download the .jar from my dropbox -> https://www.dropbox.com/sh/1fxy0ry1wcaqdjq/AAAkHHlcuFZzDeFR44QDWiA_a?dl=0
+When you run the server or client a directory in your user folder called Snowbooks is made. This folder will contain your preferences and users. If you run into any issues, delete this directory and re-run everything.
