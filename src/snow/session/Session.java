@@ -165,7 +165,10 @@ public class Session {
 
 	public void finish() {
 		System.out.println("Finished...");
-		userService.shutdownNow();
+		
+		if (userService != null) {
+			userService.shutdownNow();
+		}
 
 		if (secondStage != null) {
 			secondStage.close();

@@ -12,9 +12,16 @@ import snow.session.Preferences;
 
 public class Serialize {
 	
-	public static final String PREFERENCES_PATH = "./preferences.s"; // TODO Find a valid path
+	public static final String SNOWBOOK_PATH = System.getProperty("user.home") + "/Snowbooks/";
+	public static final String PREFERENCES_PATH = SNOWBOOK_PATH + "prefs.s"; 
 	
 	public synchronized static void savePreferences(Preferences prefs) {
+		File file = new File(SNOWBOOK_PATH);
+		
+		if (!file.exists()) {
+			file.mkdir();
+		}
+		
 		try {
 			storeSerializableClass(prefs, new File(PREFERENCES_PATH));
 		} catch (IOException e) {

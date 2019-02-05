@@ -44,7 +44,9 @@ public class PacketEncoder {
 			System.err.println("Failed to send packet; The connection to the server was never made.");
 			Alert a = new Alert(AlertType.ERROR, "Failed to connect");
 			a.initModality(Modality.APPLICATION_MODAL);
-			a.show();
+			a.showAndWait();
+			
+			
 			return;
 		}
 		

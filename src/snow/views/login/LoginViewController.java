@@ -95,7 +95,6 @@ public class LoginViewController extends Controller implements Initializable {
 		}
 
 		savePreferences();
-		
 		Packet packet = new LoginPacket(PacketType.LOGIN, username.getText(), password.getText());
 		session.getEncoder().sendPacket(true, packet);
 	}
