@@ -34,8 +34,6 @@
                         <ButtonBar buttonOrder="" prefHeight="42.0" prefWidth="554.0">
                            <buttons>
                               <Button mnemonicParsing="false" onAction="#onAddBudget" text="Add Budget" />
-                              <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" text="Profile" />
-                              <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" text="About" />
                               <Button layoutX="259.0" layoutY="19.0" mnemonicParsing="false" onAction="#onLogout" text="Log out" textFill="#8a0000" />
                            </buttons>
                         </ButtonBar>
